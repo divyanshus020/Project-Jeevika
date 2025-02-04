@@ -7,6 +7,7 @@ import { CustomerServiceOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 import Footer from '../components/Footer';
 import Team from '../components/Team';
+import MeetFounder from '../components/MeetFounder';
 
 const Home = () => {
     return (
@@ -24,7 +25,7 @@ const Home = () => {
             />
 
             <Team/>
-
+            <MeetFounder/>
             <Footer/>
         </div>
     );
