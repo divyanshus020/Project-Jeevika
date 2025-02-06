@@ -7,7 +7,7 @@ const Hire = () => {
         <div>
             <HeroSection page="Hire" />
             <ClassicLayout type="hire"/>
-            <h1 className='text-center text-3xl mt-10'>Hire page</h1>
+            {/* <h1 className='text-center text-3xl mt-10'>Hire page</h1> */}
         </div>
     );
 }

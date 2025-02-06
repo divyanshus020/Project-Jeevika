@@ -9,7 +9,7 @@ const NavBar = () => {
     { id: 1, name: "Home", path: "/" },
     { id: 2, name: "Employee", path: "/Employee" },
     { id: 3, name: "Hire", path: "/Hire" },
-    { id: 4, name: "Team", path: "/Team" },
+    { id: 4, name: "Login", path: "/AllForm" },
     // { id: 5, name: "Contact", path: "/contact" },
   ];
 

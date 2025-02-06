@@ -8,6 +8,7 @@ import { FloatButton } from 'antd';
 import Footer from '../components/Footer';
 import Team from '../components/Team';
 import MeetFounder from '../components/MeetFounder';
+// import { AnimatedTestimonials } from '../components/Animated';
 
 const Home = () => {
     return (
@@ -26,6 +27,7 @@ const Home = () => {
 
             <Team/>
             <MeetFounder/>
+            {/* <AnimatedTestimonials/> */}
             <Footer/>
         </div>
     );
