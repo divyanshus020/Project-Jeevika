@@ -1,11 +1,12 @@
 import React from "react";
-import Mission from '../assets/mission.Png'
-import Values from '../assets/values.Png'
-import Vision from '../assets/vision.Png'
+import Mission from '../assets/mission.Png';
+import Values from '../assets/values.Png';
+import Vision from '../assets/vision.Png';
+
 const MissionVisionValue = ({ items }) => {
   return (
     <div className="container mx-auto px-4 py-10">
-      <h2 className="w-full text-center mb-4 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white ">Our Mission, Vision & Values</h2>
+      <h2 className="w-full text-center mb-10 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white">Our Mission, Vision & Values</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {items.map((item, index) => (
           <div
@@ -18,7 +19,15 @@ const MissionVisionValue = ({ items }) => {
               className="w-[40vw] object-cover rounded-full mb-4"
             />
             <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-            <p className="text-gray-600">{item.description}</p>
+            {Array.isArray(item.description) ? (
+              item.description.map((desc, i) => (
+                <p key={i} className="text-gray-600">
+                  {desc}{i < item.description.length - 1 && <br />}
+                </p>
+              ))
+            ) : (
+              <p className="text-gray-600">{item.description}</p>
+            )}
           </div>
         ))}
       </div>
@@ -30,17 +39,22 @@ const data = [
   {
     image: Mission,
     title: "Our Mission",
-    description: "To provide innovative solutions for a better future.",
+    description: "To bridge the gap between establishments and workers by providing a seamless hiring platform, ensuring efficiency for businesses and stable employment for workers.",
   },
   {
     image: Vision,
     title: "Our Vision",
-    description: "To be the leading company in the tech industry.",
+    description: "To become a leading platform that seamlessly connects establishments with workers or contractors, transforming the hiring process into an easy and efficient operation.",
   },
   {
     image: Values,
     title: "Our Values",
-    description: "Integrity, Innovation, and Excellence.",
+    description: [
+      "Empowerment",
+      "Reliability",
+      "Creating growth opportunities for establishments",
+      "Enabling new areas to thrive"
+    ]
   },
 ];
 
