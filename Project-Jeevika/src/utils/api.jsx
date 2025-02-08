@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Ensure this matches the backend
+  baseURL: "http://localhost:8080/api", // Ensure this matches the backend
 });
 // Attach token to every request
 API.interceptors.request.use((req) => {
