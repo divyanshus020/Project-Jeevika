@@ -1,15 +1,13 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavBar from "../src/components/Navbar";
-import Home from "./pages/Home";
+import React from "react";
+import NavBar from "./components/NavBar";
+import Home from "../src/pages/Home"
+import AuthPage from "./pages/AuthPage";
 import Employee from "./pages/Employee";
 import Hire from "./pages/Hire";
-// import Team from "./pages/Team";
-// import Employee from "./pages/Employee";
-import AllForm from './pages/AllForm'
+import Dashboard from "./pages/Dashboard";
 
-
-const App = () => {
+function App() {
   return (
     <Router>
       <NavBar />
@@ -17,12 +15,11 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/Employee" element={<Employee />} />
         <Route path="/Hire" element={<Hire />} />
-        {/* <Route path="/Team" element={<AllForm />} /> */}
-        <Route path="/AllForm" element={<AllForm />} />
-        {/* <Route path="/contact" element={<Contact />} /> */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/AuthPage" element={<AuthPage />} />
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;
