@@ -1,7 +1,7 @@
 import React from "react";
-import Mission from '../assets/mission.Png';
-import Values from '../assets/values.Png';
-import Vision from '../assets/vision.Png';
+import Mission from '../assets/mission.png';
+import Values from '../assets/values.png';
+import Vision from '../assets/vision.png';
 
 const MissionVisionValue = ({ items }) => {
   return (
