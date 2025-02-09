@@ -6,7 +6,7 @@ import { registerUser, loginUser } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthForm({ isSignUp }) {
-  const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function AuthForm({ isSignUp }) {
         {isSignUp && (
           <input
             type="text"
-            name="fullName"
+            name="name"
             placeholder="Full Name"
             className="w-full p-3 border rounded-md"
             onChange={handleChange}

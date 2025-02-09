@@ -19,7 +19,7 @@ app.use(
 );
 
 // ✅ Import Routes
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/authRoute");
 app.use("/api/auth", authRoutes);
 
 // ✅ Default Route
