@@ -6,6 +6,8 @@ import AuthPage from "./pages/AuthPage";
 import Employee from "./pages/Employee";
 import Hire from "./pages/Hire";
 import Dashboard from "./pages/Dashboard";
+import Signup from "./pages/Signup";
+import Allform from "./pages/AllForm";
 
 function App() {
   return (
@@ -15,8 +17,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/Employee" element={<Employee />} />
         <Route path="/Hire" element={<Hire />} />
+        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/Allform" element={<Allform />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/AuthPage" element={<AuthPage />} />
+        {/* <Route path="/login" element={<Login />} /> */}
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
   );
