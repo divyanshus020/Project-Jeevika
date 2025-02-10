@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getProfile } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import React from "react"
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 
 
 export default function Dashboard() {
@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   return (
     <>
-    <Navbar/>
+    {/* <Navbar/> */}
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold">Welcome, {user?.fullName || "User"}</h2>
