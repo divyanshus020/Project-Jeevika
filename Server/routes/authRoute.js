@@ -1,11 +1,16 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User"); // Ensure the User model path is correct
-const { register, login } = require("../controllers/authController");
+const { register, login, getProfile } = require("../controllers/authController"); // Import getProfile
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/register",register);
-router.post("/login",login)
+// Route to get user profile (protected by authMiddleware)
+router.get("/profile", authMiddleware, getProfile);
+
+// Route to register a new user
+router.post("/register", register);
+
+// Route to log in a user
+router.post("/login", login);
+
 module.exports = router;

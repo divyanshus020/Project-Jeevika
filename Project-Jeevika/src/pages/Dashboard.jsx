@@ -26,7 +26,8 @@ export default function Dashboard() {
     {/* <Navbar/> */}
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-2xl font-bold">Welcome, {user?.fullName || "User"}</h2>
+          <h2 className="text-2xl font-bold">Welcome, {user?.user?.name}</h2>
+          <h2 className="text-2xl font-bold">Role, {user?.user?.__v}</h2>
         </div>
       </div>
     </>

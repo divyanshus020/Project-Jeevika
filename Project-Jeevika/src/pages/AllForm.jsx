@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const res = await loginUser(formData);
       localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
+      window.open("/dashboard", "_blank");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     }
