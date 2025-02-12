@@ -7,5 +7,4 @@ const userSchema = new mongoose.Schema({
     role: { type: String, required: true, enum: ["hire", "employee", "team"] , default: "hire"}, // Ensure valid roles
 }, { timestamps: true });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);
