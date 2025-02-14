@@ -13,7 +13,7 @@
     "@bradgarropy/next-link": "^1.1.0",
     "@tabler/icons-react": "^3.29.0",
     "@tailwindcss/vite": "^4.0.3",
-    "antd": "^5.23.3",
+    "antd": "^5.24.0",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
     "cors": "^2.8.5",
@@ -22,6 +22,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.5",
+    "react-toastify": "^11.0.3",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.3"
   },

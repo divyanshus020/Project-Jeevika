@@ -11,6 +11,7 @@ import Allform from "./pages/AllForm";
 
 function App() {
   return (
+    <>
     <Router>
       <NavBar />
       <Routes>
@@ -24,6 +25,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
+    </>
   );
 }
 
