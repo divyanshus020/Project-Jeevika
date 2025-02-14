@@ -7,7 +7,7 @@ import Employee from "./pages/Employee";
 import Hire from "./pages/Hire";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
-import Allform from "./pages/AllForm";
+import Login from "./pages/AllForm";
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
         <Route path="/Employee" element={<Employee />} />
         <Route path="/Hire" element={<Hire />} />
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        <Route path="/Allform" element={<Allform />} />
+        <Route path="/Login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/signup" element={<Signup />} />

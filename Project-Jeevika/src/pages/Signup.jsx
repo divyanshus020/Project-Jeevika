@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal, Spin } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import InputField from "../components/InputField";
@@ -9,6 +10,7 @@ export default function Signup() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "" });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false); // Antd Modal State
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -19,28 +21,29 @@ export default function Signup() {
         e.preventDefault();
         setLoading(true);
         setError("");
-    
+
         if (!formData.role) {
             setError("Please select a role.");
             setLoading(false);
             return;
         }
-    
-        console.log("Sending Data:", formData); // Debugging: Check if role is included
-    
+
         try {
             const res = await registerUser(formData);
             console.log("Response:", res.data); // Debugging: Check backend response
-    
-            localStorage.setItem("token", res.data.token);
-            navigate("/dashboard");
+
+            setIsModalOpen(true); // Show success popup
+            setTimeout(() => {
+                setIsModalOpen(false);
+                navigate("/Login"); // Redirect to login page after 3 seconds
+            }, 3000);
         } catch (err) {
             setError(err.response?.data?.message || "Signup failed. Try again.");
         }
-    
+
         setLoading(false);
     };
-    
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100">
             <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-md">
@@ -105,7 +108,7 @@ export default function Signup() {
                         className="w-full p-3 text-white bg-blue-500 rounded-md hover:bg-blue-600"
                         disabled={loading}
                     >
-                        {loading ? "Signing up..." : "Sign Up"}
+                        {loading ? <Spin size="small" /> : "Sign Up"}
                     </button>
                 </form>
 
@@ -121,11 +124,23 @@ export default function Signup() {
 
                 <p className="text-center text-sm mt-4">
                     Already have an account?{" "}
-                    <Link to="/login" className="text-blue-500 hover:underline">
+                    <Link to="/Login" className="text-blue-500 hover:underline">
                         Login
                     </Link>
                 </p>
             </div>
+
+            {/* Success Modal */}
+            <Modal
+                title="Account Created"
+                open={isModalOpen}
+                footer={null}
+                onCancel={() => setIsModalOpen(false)}
+            >
+                <p>Your profile has been created successfully!</p>
+                <p>Redirecting to login page...</p>
+            </Modal>
         </div>
     );
 }
+
