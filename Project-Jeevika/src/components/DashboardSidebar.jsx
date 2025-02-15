@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  FormOutlined,
-  UserOutlined,
-  RightOutlined,
-  LeftOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
+import { FormOutlined, UserOutlined, RightOutlined, LeftOutlined, TeamOutlined } from "@ant-design/icons";
 import PopupForm from "./PopupForm"; // Import Popup Form
 
 const DashboardSidebar = ({ userRole }) => {
@@ -18,7 +12,7 @@ const DashboardSidebar = ({ userRole }) => {
       key: "form",
       label: "Form",
       icon: <FormOutlined className="mr-2" />,
-      onClick: () => setIsFormOpen(true),
+      onClick: () => setIsFormOpen(true), // Directly open modal
     },
     {
       key: "profile",
@@ -37,8 +31,6 @@ const DashboardSidebar = ({ userRole }) => {
         ]
       : []),
   ];
-
-  console.log("User Role in Sidebar:", userRole);
 
   return (
     <>
@@ -85,7 +77,7 @@ const DashboardSidebar = ({ userRole }) => {
       </div>
 
       {/* Popup Form */}
-      {isFormOpen && <PopupForm onClose={() => setIsFormOpen(false)} userRole={userRole} />}
+      <PopupForm visible={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </>
   );
 };
