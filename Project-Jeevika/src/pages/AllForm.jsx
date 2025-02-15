@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FiMail, FiLock } from "react-icons/fi";
 import InputField from "../components/InputField";
-import { loginUser } from "../utils/api";
+import { loginUser, getProfile } from "../utils/api"; // Ensure getProfile is imported
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -14,6 +14,7 @@ export default function Login() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -22,19 +23,33 @@ export default function Login() {
     setError("");
 
     try {
+      // Login request
       const res = await loginUser(formData);
-      localStorage.setItem("token", res.data.token);
-      window.open("/dashboard", "_blank");
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
-    }
 
-    setLoading(false);
+      // Store token immediately
+      const token = res.data.token;
+      localStorage.setItem("token", token);
+
+      // Fetch user role with Authorization header
+      const profile = await getProfile(token); // Ensure API uses this token
+
+      // Store user role in localStorage
+      localStorage.setItem("userRole", profile.data.role);
+
+      // Ensure state updates before redirection
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 200); // Small delay to sync state
+    } catch (err) {
+      console.error("Login Error:", err);
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
-    // TODO: Integrate Google OAuth logic
     setTimeout(() => {
       setGoogleLoading(false);
       alert("Google login feature coming soon! 🚀");
