@@ -41,7 +41,7 @@ export default function Dashboard() {
           ) : (
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl text-center">
               <h1 className="text-3xl font-bold text-gray-800">Welcome, {user?.user?.name}!</h1>
-              <h1 className="text-3xl font-bold text-gray-800">Role: {user?.user?.role}!</h1>
+              <h1 className="text-3xl font-bold text-gray-800">Role: {user?.user?.role}</h1>
               <p className="text-gray-600 mt-2">This is your dashboard.</p>
             </div>
           )}

@@ -18,10 +18,10 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 // ✅ CORS Configuration
-const allowedOrigins = process.env.CLIENT_ORIGIN || "http://localhost:5173"; // Use .env for frontend URL
+const allowedOrigins = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
-    origin: allowedOrigins.split(","), // Supports multiple origins
+    origin: allowedOrigins.split(","), // Supports multiple frontend URLs
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -29,19 +29,29 @@ app.use(
 
 // ✅ Import Routes
 const authRoutes = require("./routes/authRoute");
+const employeeRoutes = require("./routes/employeeRoute");
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/employee", employeeRoutes);
 
-// ✅ Default Route
+// ✅ Default API Check Route
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "API is running..." });
+  res.status(200).json({ message: "API is running successfully 🚀" });
 });
 
-// ✅ Error Handling Middleware
+// ✅ 404 Route Handling
+app.use((req, res) => {
+  res.status(404).json({ message: "❌ Route not found!" });
+});
+
+// ✅ Global Error Handling Middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+  console.error("❌ Error:", err.message);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined, // Show stack only in development mode
+  });
 });
 
 module.exports = app;
