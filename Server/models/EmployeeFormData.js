@@ -10,7 +10,6 @@ const EmployeeFormDataSchema = new mongoose.Schema(
     workCategory: { type: String, required: true },
     experience: { type: String, required: true },
     expectedSalary: { type: Number, required: true },
-    workType: { type: String, required: true },
     currentCity: { type: String, required: true },
     pincode: { type: String, required: true },
   },

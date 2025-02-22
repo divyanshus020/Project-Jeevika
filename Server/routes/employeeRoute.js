@@ -3,10 +3,10 @@ const router = express.Router();
 const EmployeeFormData = require("../models/EmployeeFormData");
 
 // ✅ POST: Worker Profile Form Submission
-router.post("/submit", async (req, res) => {
+router.post("/employeedataform", async (req, res) => {
   try {
     const employeeData = req.body;
-
+    
     const newEmployee = new EmployeeFormData(employeeData);
     await newEmployee.save();
 

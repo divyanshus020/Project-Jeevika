@@ -33,7 +33,7 @@ const employeeRoutes = require("./routes/employeeRoute");
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/employee", employeeRoutes);
+app.use("/api", employeeRoutes);
 
 // ✅ Default API Check Route
 app.get("/", (req, res) => {
