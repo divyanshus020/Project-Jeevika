@@ -8,6 +8,8 @@ import Hire from "./pages/Hire";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
 import Login from "./pages/AllForm";
+import WorkerProfilePage from "./components/WorkerProfilePage";
+import CompanyProfilePage from "./components/CompanyProfilePage";
 
 function App() {
   return (
@@ -23,6 +25,9 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/signup" element={<Signup />} />
+        <Route path="/worker-profile" element={<WorkerProfilePage />} />
+        <Route path="/company-profile" element={<CompanyProfilePage />} />
+
       </Routes>
     </Router>
     </>

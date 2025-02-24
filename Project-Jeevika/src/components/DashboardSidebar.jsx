@@ -1,10 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // For navigation
 import { FormOutlined, UserOutlined, RightOutlined, LeftOutlined, TeamOutlined } from "@ant-design/icons";
-import PopupForm from "./PopupForm"; // Import Popup Form
 
 const DashboardSidebar = ({ userRole }) => {
   const [visible, setVisible] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const navigate = useNavigate(); // React Router Navigation
+
+  // Determine which form to show based on user role
+  const getFormRoute = () => {
+    if (userRole === "employee") return "/worker-profile";
+    if (userRole === "hire") return "/company-profile";
+    return "/"; // Default route
+  };
 
   // Sidebar menu items
   const sidebarItems = [
@@ -12,7 +19,7 @@ const DashboardSidebar = ({ userRole }) => {
       key: "form",
       label: "Form",
       icon: <FormOutlined className="mr-2" />,
-      onClick: () => setIsFormOpen(true), // Directly open modal
+      onClick: () => navigate(getFormRoute()), // Redirect based on role
     },
     {
       key: "profile",
@@ -75,9 +82,6 @@ const DashboardSidebar = ({ userRole }) => {
           </nav>
         </div>
       </div>
-
-      {/* Popup Form */}
-      <PopupForm visible={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </>
   );
 };
