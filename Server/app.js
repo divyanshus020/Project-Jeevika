@@ -1,8 +1,12 @@
+// ✅ Import Required Modules
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const authRoutes = require("./routes/authRoute");
+const employeeRoutes = require("./routes/employeeRoute");
+const companyRoutes = require("./routes/companyRoute");
 
 dotenv.config();
 const app = express();
@@ -27,13 +31,10 @@ app.use(
   })
 );
 
-// ✅ Import Routes
-const authRoutes = require("./routes/authRoute");
-const employeeRoutes = require("./routes/employeeRoute");
-
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api", employeeRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/companies", companyRoutes);
 
 // ✅ Default API Check Route
 app.get("/", (req, res) => {
@@ -50,7 +51,7 @@ app.use((err, req, res, next) => {
   console.error("❌ Error:", err.message);
   res.status(err.status || 500).json({
     message: err.message || "Internal Server Error",
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined, // Show stack only in development mode
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
 });
 

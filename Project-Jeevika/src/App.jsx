@@ -7,7 +7,7 @@ import Employee from "./pages/Employee";
 import Hire from "./pages/Hire";
 import Dashboard from "./pages/Dashboard";
 import Signup from "./pages/Signup";
-import Login from "./pages/AllForm";
+import Login from "./pages/LoginPage";
 import WorkerProfilePage from "./components/WorkerProfilePage";
 import CompanyProfilePage from "./components/CompanyProfilePage";
 
