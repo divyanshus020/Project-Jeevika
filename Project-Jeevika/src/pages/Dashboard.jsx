@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getProfile } from "../utils/api";
+// import { getProfile } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import DashboardSidebar from "../components/DashboardSidebar";
 import Loader from "../components/Loader"; 
@@ -13,17 +13,17 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const userData = await getProfile(); // ✅ Calls the fixed getProfile() function
-        setUser(userData);
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-        navigate("/");
-      } finally {
-        setLoading(false);
-      }
-    }
+    // async function fetchUser() {
+    //   try {
+    //     const userData = await getProfile(); // ✅ Calls the fixed getProfile() function
+    //     setUser(userData);
+    //   } catch (err) {
+    //     console.error("Error fetching profile:", err);
+    //     navigate("/");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
     fetchUser();
   }, [navigate]);
 

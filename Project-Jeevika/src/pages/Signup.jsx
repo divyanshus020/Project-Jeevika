@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import InputField from "../components/InputField";
-import { registerUser } from "../utils/api";
+//import { registerUser } from "../utils/api";
 
 export default function Signup() {
     const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "" });
@@ -27,7 +27,7 @@ export default function Signup() {
         }
 
         try {
-            const res = await registerUser(formData);
+          //  const res = await registerUser(formData);
             console.log("Response:", res.data);
 
             // Redirect based on role

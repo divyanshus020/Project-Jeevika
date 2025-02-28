@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const authRoutes = require("./routes/authRoute");
+const employeeRoutes = require("./routes/employeeRoute");
+const companyRoutes = require("./routes/companyRoute");
+const teamRoutes = require("./routes/teamRoutes");
 
 dotenv.config();
 const app = express();
@@ -30,6 +33,9 @@ app.use(
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api", employeeRoutes);
+app.use("/api", companyRoutes);
+app.use("/api", teamRoutes);
 
 // ✅ Default API Check Route
 app.get("/", (req, res) => {

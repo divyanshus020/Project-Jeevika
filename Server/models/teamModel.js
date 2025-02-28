@@ -1,15 +1,12 @@
 const mongoose = require("mongoose");
 
 const TeamSchema = new mongoose.Schema({
-  teamUsername: { type: String, required: true, unique: true },
+  teamUserName: { type: String, required: true, unique: true },
   teamMail: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  industry: String,
-  membersCount: Number,
-  address: String,
-  pincode: String,
-  mobileNumber: String,
-  requirements: String,
+  mobileNumber: { type: Number, required: true },
+  address: { type: String, required: true },
+  pincode: { type: Number, required: true },
 });
 
 module.exports = mongoose.model("Team", TeamSchema);

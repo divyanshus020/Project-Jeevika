@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker, message } from 'antd';
-import { submitEmployeeProfile } from '../utils/api';
+// import { submitEmployeeProfile } from '../utils/api';
 import moment from 'moment';
 
 const EmployeeDataForm = ({ onClose }) => {
