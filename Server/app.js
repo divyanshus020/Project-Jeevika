@@ -1,12 +1,9 @@
-// ✅ Import Required Modules
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const authRoutes = require("./routes/authRoute");
-const employeeRoutes = require("./routes/employeeRoute");
-const companyRoutes = require("./routes/companyRoute");
 
 dotenv.config();
 const app = express();
@@ -33,8 +30,6 @@ app.use(
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/employees", employeeRoutes);
-app.use("/api/companies", companyRoutes);
 
 // ✅ Default API Check Route
 app.get("/", (req, res) => {

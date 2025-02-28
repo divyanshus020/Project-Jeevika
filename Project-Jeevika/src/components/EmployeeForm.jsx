@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input, Form } from 'antd';
+import { Modal, Button, Input, Form, message } from 'antd';
+import { loginUser } from '../utils/api'; // Import API function
 import EmployeeDataForm from './EmployeeDataForm';
 
 const EmployeeForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Success:', formData);
+    setLoading(true);
+    try {
+      const { data } = await loginUser(formData);
+      localStorage.setItem("token", data.token); // Store token
+      message.success("Login successful!");
+      window.location.href = "/dashboard"; // Redirect to dashboard
+    } catch (error) {
+      message.error(error.response?.data?.message || "Login failed!");
+    }
+    setLoading(false);
   };
 
   return (
@@ -26,7 +37,7 @@ const EmployeeForm = () => {
             name="username" 
             value={formData.username} 
             onChange={handleChange} 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+            className="w-full p-3 border rounded-lg"
             placeholder="Enter your username"
             required
           />
@@ -37,12 +48,12 @@ const EmployeeForm = () => {
             name="password" 
             value={formData.password} 
             onChange={handleChange} 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+            className="w-full p-3 border rounded-lg"
             placeholder="Enter your password"
             required
           />
         </div>
-        <Button type="primary" htmlType="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg py-3 rounded-lg font-medium">
+        <Button type="primary" htmlType="submit" className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium" loading={loading}>
           Login
         </Button>
         <p className="text-center mt-4">
@@ -52,7 +63,7 @@ const EmployeeForm = () => {
           </Button>
         </p>
       </form>
-      <Modal title="Register" visible={isModalVisible} footer={null} onCancel={() => setIsModalVisible(false)}>
+      <Modal title="Register" open={isModalVisible} footer={null} onCancel={() => setIsModalVisible(false)}>
         <EmployeeDataForm onClose={() => setIsModalVisible(false)} />
       </Modal>
     </div>

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const EmployeeFormData = require("../models/EmployeeFormData");
+const EmployeeFormData = require("../models/employeeModel");
 
 // ✅ POST: Worker Profile Form Submission
 router.post("/employeedataform", async (req, res) => {

@@ -1,85 +1,54 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const Employee = require("../models/employeeModel");
+const Company = require("../models/companyModel");
+const Team = require("../models/teamModel");
 
-// Register New User
-const register = async (req, res) => {
+exports.registerUser = async (req, res) => {
+  const { role, ...userData } = req.body;
+
   try {
-    const { name, email, password, role } = req.body;
+    let Model;
+    if (role === "Employee") Model = Employee;
+    else if (role === "Company") Model = Company;
+    else if (role === "Team") Model = Team;
+    else return res.status(400).json({ message: "Invalid role" });
 
-    // Validate input fields
-    if (!name || !email || !password || !role) {
-      return res.status(400).json({ message: "All fields are required." });
-    }
+    const existingUser = await Model.findOne({ username: userData.username });
+    if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email is already in use." });
-    }
+    const salt = await bcrypt.genSalt(10);
+    userData.password = await bcrypt.hash(userData.password, salt);
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create new user
-    const newUser = new User({ name, email, password: hashedPassword, role });
+    const newUser = new Model(userData);
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully! Please log in." });
-  } catch (error) {
-    console.error("Registration Error:", error);
-    res.status(500).json({ message: "Server error. Please try again later." });
+    res.status(201).json({ message: "Registration successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// User Login
-const login = async (req, res) => {
+exports.loginUser = async (req, res) => {
+  const { role, username, password } = req.body;
+
   try {
-    const { email, password } = req.body;
+    let Model;
+    if (role === "Employee") Model = Employee;
+    else if (role === "Company") Model = Company;
+    else if (role === "Team") Model = Team;
+    else return res.status(400).json({ message: "Invalid role" });
 
-    // Validate input fields
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required." });
-    }
+    const user = await Model.findOne({ username });
+    if (!user) return res.status(400).json({ message: "User not found" });
 
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password." });
-    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid email or password." });
-    }
+    const token = jwt.sign({ id: user._id, role }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.status(200).json({ message: "Login successful!", token, role: user.role });
-  } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ message: "Server error. Please try again later." });
+    res.status(200).json({ token, message: "Login successful", role });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
-
-// Get User Profile
-const getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.userId).select("-password");
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
-    res.status(200).json({ user });
-  } catch (error) {
-    console.error("Profile Fetch Error:", error);
-    res.status(500).json({ message: "Server error. Please try again later." });
-  }
-};
-
-module.exports = { register, login, getProfile };
