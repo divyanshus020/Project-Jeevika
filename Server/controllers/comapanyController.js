@@ -6,9 +6,9 @@ const jwt = require("jsonwebtoken");
 
  const createCompany = async (req,res)=>{
     try{
-        const {companyName,companyMail,password,mobileNumber,address,industryDepartment,workExperience,foundedDate,pincode,category,requirement} = req.body;
+        const {companyName,email,password,mobileNumber,address,industryDepartment,workExperience,foundedDate,pincode,category,requirement} = req.body;
         if(!companyName ||
-          !companyMail ||
+          !email ||
           ! password ||
           !workExperience ||
           !industryDepartment ||
@@ -20,7 +20,7 @@ const jwt = require("jsonwebtoken");
           !requirement){
            return res.status(400).json({message:"Please fill all the fields"});
        }
-        const existingCompany =await Company.findOne({ companyMail });
+        const existingCompany =await Company.findOne({ email });
         console.log(existingCompany);
         if (existingCompany ) {
             return res.status(400).json({ message: 'Email already exists' });
@@ -30,7 +30,7 @@ const jwt = require("jsonwebtoken");
      
         const newCompany = new Company({
           companyName,
-          companyMail,
+          email,
           password:hashedPassword,
           industryDepartment,
           workExperience,
@@ -46,7 +46,7 @@ const jwt = require("jsonwebtoken");
             message: "Registration successful",
             data: {
               companyName:response.companyName,
-              companyMail:response.companyMail,
+              email:response.email,
               industryDepartment:response.industryDepartment,
               workExperience:response.workExperience,
               foundedDate:response.foundedDate,
@@ -71,7 +71,7 @@ const  signInCompany = async (req, res) => {
             return res.status(400).json({ message: "Please provide email and password" });
         }
     
-        const company = await Company.findOne({ companyMail: email });
+        const company = await Company.findOne({ email: email });
         if (!company) {
             return res.status(404).json({ message: "User With Email Not Exists" });
         }
@@ -83,7 +83,7 @@ const  signInCompany = async (req, res) => {
         }
         data={
           companyName:company.companyName,
-          companyMail:company.companyMail,
+          email:company.email,
           industryDepartment:company.industryDepartment,
           workExperience:company.workExperience,
           foundedDate:company.foundedDate,
@@ -113,7 +113,7 @@ const  signInCompany = async (req, res) => {
 const editCompany = async (req, res) => {
     try {
         const { companyName, mobileNumber, address, pincode, industryDepartment, requirement, category } = req.body;
-        const company = await Company.findById(req.params.id);
+        const company = await Company.findById(req.user.id);
         
         if (!company) {
             return res.status(404).json({ message: 'Company not found' });
@@ -139,7 +139,7 @@ const editCompany = async (req, res) => {
             message: 'Company updated successfully', 
             data: {
                 companyName: updatedCompany.companyName,
-                companyMail: updatedCompany.companyMail,
+                email: updatedCompany.email,
                 industryDepartment: updatedCompany.industryDepartment,
                 foundedDate: updatedCompany.foundedDate,
                 category: updatedCompany.category,

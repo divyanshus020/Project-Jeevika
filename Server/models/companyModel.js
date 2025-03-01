@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const CompanySchema = new mongoose.Schema({
   companyName: { type: String, required: true, unique: true },
-  companyMail: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -17,6 +17,8 @@ const CompanySchema = new mongoose.Schema({
   pincode: { type: Number, required: true },
   mobileNumber: { type: Number, required: true },
   requirement: { type: String, required: true },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 });
 
 module.exports = mongoose.model("Company", CompanySchema);

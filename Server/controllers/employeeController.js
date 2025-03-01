@@ -11,7 +11,6 @@ const jwt = require("jsonwebtoken");
            return res.status(400).json({message:"Please fill all the fields"});
        }
         const existingUser  =await Employee.findOne({ email });
-        console.log(existingUser);
         if (existingUser ) {
             return res.status(400).json({ message: 'Email already exists' });
         }
@@ -31,6 +30,7 @@ const jwt = require("jsonwebtoken");
             dob
         });
        const response =  await newEmployee.save();
+       console.log(response);
         res.status(201).json({
             message: "Registration successful",
             data: {
@@ -79,7 +79,7 @@ const  signInEmployee = async (req, res) => {
         const token = jwt.sign(
            data,
             process.env.JWT_SECRET,
-            { expiresIn: "24h" }
+            { expiresIn: "1d" }
         );
 
         res.status(200).json({
@@ -96,7 +96,7 @@ const  signInEmployee = async (req, res) => {
 const editEmployee = async (req, res) => {
     try {
         const { name, email, mobile, address, workExperience, expectedSalary, jobRole, pincode, dob } = req.body;
-        const employeeId = req.params.id;
+        const employeeId = req.user.id;
 
         // Find employee by ID
         const employee = await Employee.findById(employeeId);

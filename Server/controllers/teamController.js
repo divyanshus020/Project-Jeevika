@@ -5,11 +5,11 @@ const jwt = require('jsonwebtoken');
 
 const createTeamMember = async (req, res) => {
     try {
-        const { teamUserName, teamMail, password, mobileNumber, address, pincode } = req.body;
-        if (!teamUserName || !teamMail || !password || !mobileNumber || !address || !pincode) {
+        const { teamUserName, email, password, mobileNumber, address, pincode } = req.body;
+        if (!teamUserName || !email || !password || !mobileNumber || !address || !pincode) {
             return res.status(400).json({ message: 'Please fill all the fields' });
         }
-        const existingUser = await Team.findOne({ teamMail });
+        const existingUser = await Team.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already exists' });
         }
@@ -17,7 +17,7 @@ const createTeamMember = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
         const newTeamMember = new Team({
             teamUserName,
-            teamMail,
+            email,
             password: hashedPassword,
             mobileNumber,
             address,
@@ -29,7 +29,7 @@ const createTeamMember = async (req, res) => {
             data: {
                 id: response._id,
                 teamUserName: response.teamUserName,
-                teamMail: response.teamMail,
+                email: response.email,
                 mobileNumber: response.mobileNumber,
                 address: response.address,
                 pincode: response.pincode,
@@ -41,11 +41,11 @@ const createTeamMember = async (req, res) => {
 }
 const signInTeamMember = async (req, res) => {
     try {
-        const { teamMail, password } = req.body;
-        if (!teamMail || !password) {
+        const { email, password } = req.body;
+        if (!email || !password) {
             return res.status(400).json({ message: 'Please fill all the fields' });
         }
-        const teamMember = await Team.findOne({ teamMail });
+        const teamMember = await Team.findOne({ email });
         if (!teamMember) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
@@ -53,7 +53,7 @@ const signInTeamMember = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
-        const token = jwt.sign({ teamMail: teamMember.teamMail },process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email: teamMember.email },process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({ message: 'Login successful', token,data:teamMember });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -62,7 +62,7 @@ const signInTeamMember = async (req, res) => {
 const editTeamMember = async (req, res) => {
     try {
         const { teamUserName,mobileNumber, address, pincode } = req.body;
-        const teamMember = await Team.findById(req.params.id);
+        const teamMember = await Team.findById(req.user.id);
         if (!teamMember) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -79,7 +79,7 @@ const editTeamMember = async (req, res) => {
         );
         res.status(200).json({ message: 'User updated successfully', data:{
             teamUserName:updatedTeamMember.teamUserName,
-            teamMail:updatedTeamMember.teamMail,
+            email:updatedTeamMember.email,
             mobileNumber:updatedTeamMember.mobileNumber,
             address:updatedTeamMember.address,
             pincode:updatedTeamMember.pincode,

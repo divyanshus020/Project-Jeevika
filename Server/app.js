@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const authRoutes = require("./routes/authRoute");
@@ -8,7 +7,7 @@ const employeeRoutes = require("./routes/employeeRoute");
 const companyRoutes = require("./routes/companyRoute");
 const teamRoutes = require("./routes/teamRoutes");
 
-dotenv.config();
+require('dotenv').config();
 const app = express();
 
 // ✅ Middleware

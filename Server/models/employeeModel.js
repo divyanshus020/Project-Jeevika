@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const EmployeeSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
   email: {
     type: String,
     required: true,
@@ -17,6 +17,8 @@ const EmployeeSchema = new mongoose.Schema({
   expectedSalary: { type: Number, required: true },
   jobRole: { type: String, required: true },
   dob: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date
 });
 
 module.exports = mongoose.model("Employee", EmployeeSchema);
