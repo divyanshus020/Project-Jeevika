@@ -25,7 +25,7 @@ const allowedOrigins = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
     origin: allowedOrigins.split(","), // Supports multiple frontend URLs
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     credentials: true,
   })
 );

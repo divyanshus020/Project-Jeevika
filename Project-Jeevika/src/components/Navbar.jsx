@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Modal, Button } from "antd";
+import { Link, useLocation } from "react-router-dom";
+import { Dropdown, Menu, Button } from "antd";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -15,27 +13,26 @@ const NavBar = () => {
     setIsAuthenticated(!!token);
   }, [location]);
 
-  const showLogoutModal = () => {
-    setIsLogoutModalVisible(true);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    setIsLogoutModalVisible(false);
-    navigate("/"); // Redirect to home after logout
-  };
-
-  const handleCancelLogout = () => {
-    setIsLogoutModalVisible(false);
-  };
-
   const navLinks = [
     { id: 1, name: "Home", path: "/" },
     { id: 2, name: "Employee", path: "/Employee" },
     { id: 3, name: "Hire", path: "/Hire" },
-    // { id: 3, name: "Login", path: "/Login" },
   ];
+
+  // Dropdown menu for registration
+  const registrationMenu = (
+    <Menu>
+      <Menu.Item key="admin">
+        <Link to="/register/admin">Admin</Link>
+      </Menu.Item>
+      <Menu.Item key="employee">
+        <Link to="/register/employee">Employee</Link>
+      </Menu.Item>
+      <Menu.Item key="company">
+        <Link to="/register/company">Company</Link>
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
@@ -85,51 +82,29 @@ const NavBar = () => {
               </li>
             ))}
 
-            {/* Dashboard Button (Visible Only When Logged In) */}
-            {isAuthenticated && (
-              <li>
-                <Link
-                  to="/dashboard"
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                >
-                  Dashboard
-                </Link>
-              </li>
-            )}
-
-            {/* Login / Logout Button */}
+            {/* Register Dropdown Button */}
             <li>
-              {isAuthenticated ? (
-                <button
-                  onClick={showLogoutModal}
-                  className="block py-2 px-4 bg-red-500 text-white rounded md:hover:bg-red-600"
-                >
-                  Logout
-                </button>
-              ) : (
+              <Dropdown overlay={registrationMenu} trigger={['click']}>
+                <Button className="block py-2 px-4 bg-blue-500 text-white rounded md:hover:bg-blue-600">
+                  Register
+                </Button>
+              </Dropdown>
+            </li>
+
+            {/* Login Button */}
+            {!isAuthenticated && (
+              <li>
                 <Link
                   to="/Login"
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   Login
                 </Link>
-              )}
-            </li>
+              </li>
+            )}
           </ul>
         </div>
       </div>
-
-      {/* Logout Confirmation Modal */}
-      <Modal
-        title="Confirm Logout"
-        open={isLogoutModalVisible}  // Changed 'visible' to 'open'
-        onOk={handleLogout}
-        onCancel={handleCancelLogout}
-        okText="Yes, Logout"
-        cancelText="Cancel"
-      >
-        <p>Are you sure you want to log out?</p>
-      </Modal>
     </nav>
   );
 };

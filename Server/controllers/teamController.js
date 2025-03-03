@@ -54,7 +54,11 @@ const signInTeamMember = async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
         const token = jwt.sign({ email: teamMember.email },process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ message: 'Login successful', token,data:teamMember });
+        res.status(200).json({ message: 'Login successful', token,
+            data:{
+            id:teamMember._id,
+            ...teamMember }
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -11,15 +11,8 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASSWORD || "sopkidnzupcjahbk"
     }
 });
-console.log("email",process.env.EMAIL_USER);
-console.log("passw",process.env.EMAIL_PASSWORD);
-transporter.verify(function (error, success) {
-    if (error) {
-        console.log(error);
-    } else {
-        console.log("Server is ready to take our messages");
-    }
-});
+
+
 const sendEmail = async (options) => {
     const mailOptions = {
         from: process.env.EMAIL_FROM,

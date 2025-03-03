@@ -1,48 +1,108 @@
 import React, { useState } from 'react';
+import { Modal, Button, Input, Form, message } from 'antd';
+import { signInTeamMember, forgetPassword } from '../utils/api'; // Import API functions
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const AdminForm = () => {
-  const [formData, setFormData] = useState({ adminUsername: '', adminPassword: '' });
+  const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      const userType = 'admin'; // Set user type explicitly
+      const response = await signInTeamMember({ ...values, userType });
+
+      // Store authentication details securely
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('adminData', JSON.stringify(response.data.data));
+      localStorage.setItem('role', 'admin');
+      localStorage.setItem('userType', userType); // Store userType
+
+      message.success('Login successful! Redirecting...');
+      navigate('/AdminDashboard', { state: { admin: response.data.data } });
+    } catch (err) {
+      message.error(err.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Success:', formData);
+  const handlePasswordReset = async (values) => {
+    setResetLoading(true);
+    try {
+      await forgetPassword({ email: values.email, userType: 'admin' });
+
+      message.success('Password reset link sent to your email!');
+      setIsForgotPasswordModalVisible(false);
+    } catch (err) {
+      message.error(err.response?.data?.message || 'Failed to send reset link');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-8 border rounded-lg shadow-md w-full max-w-md bg-white">
-      <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2">Admin Username</label>
-        <input 
-          type="text" 
-          name="adminUsername" 
-          value={formData.adminUsername} 
-          onChange={handleChange} 
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-          placeholder="Enter your admin username"
-          required
-        />
+    <div className="flex flex-col items-center justify-center h-auto">
+      <div className="p-8 border rounded-lg shadow-md w-full max-w-md bg-white">
+        <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
+
+        <Form onFinish={handleSubmit} layout="vertical">
+          <Form.Item
+            label="Admin Username"
+            name="adminUsername"
+            rules={[{ required: true, message: 'Please enter your username' }]}
+          >
+            <Input placeholder="Enter your admin username" />
+          </Form.Item>
+
+          <Form.Item
+            label="Password"
+            name="adminPassword"
+            rules={[{ required: true, message: 'Please enter your password' }]}
+          >
+            <Input.Password placeholder="Enter your admin password" />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" className="w-full" loading={loading}>
+            Login
+          </Button>
+        </Form>
+
+        <div className="text-center mt-4">
+          <Button type="link" onClick={() => setIsForgotPasswordModalVisible(true)}>
+            Forgot Password?
+          </Button>
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2">Admin Password</label>
-        <input 
-          type="password" 
-          name="adminPassword" 
-          value={formData.adminPassword} 
-          onChange={handleChange} 
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-          placeholder="Enter your admin password"
-          required
-        />
-      </div>
-      <button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg py-3 rounded-lg font-medium">
-        Login
-      </button>
-    </form>
+
+      {/* Forgot Password Modal */}
+      <Modal
+        title="Reset Password"
+        open={isForgotPasswordModalVisible}
+        footer={null}
+        onCancel={() => setIsForgotPasswordModalVisible(false)}
+      >
+        <Form onFinish={handlePasswordReset} layout="vertical">
+          <Form.Item
+            label="Enter your email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Invalid email format' },
+            ]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" className="w-full" loading={resetLoading}>
+            Send Reset Link
+          </Button>
+        </Form>
+      </Modal>
+    </div>
   );
 };
 

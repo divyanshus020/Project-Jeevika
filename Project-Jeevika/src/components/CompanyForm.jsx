@@ -1,61 +1,127 @@
 import React, { useState } from 'react';
-import { Modal, Button, Input } from 'antd';
-import CompanyDataForm from './CompanyDataForm';
+import { Modal, Button, Input, Form, message } from 'antd';
+import { signInCompany, forgetPassword } from '../utils/api'; // Import API functions
+import CompanyDataForm from '../pages/CompanyRegsiter'; // Import Company Register Form
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const CompanyForm = () => {
-  const [formData, setFormData] = useState({ companyUsername: '', companyPassword: '' });
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false);
+  const [isForgotPasswordModalVisible, setIsForgotPasswordModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      const userType = localStorage.getItem('userType') || 'company'; // Retrieve userType from localStorage
+      const response = await signInCompany({ ...values, userType });
+
+      // Store authentication details securely
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('companyData', JSON.stringify(response.data.data));
+      localStorage.setItem('role', 'company'); // Store user role
+      localStorage.setItem('userType', userType); // Store userType
+
+      message.success('Login successful! Redirecting...');
+      navigate('/CompanyDashboard', { state: { company: response.data.data } });
+    } catch (err) {
+      message.error(err.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Success:', formData);
+  const handlePasswordReset = async (values) => {
+    setResetLoading(true);
+    try {
+      const userType = localStorage.getItem('userType') || 'company'; // Retrieve userType from localStorage
+      await forgetPassword({ email: values.email, userType });
+
+      message.success('Password reset link sent to your email!');
+      setIsForgotPasswordModalVisible(false);
+    } catch (err) {
+      message.error(err.response?.data?.message || 'Failed to send reset link');
+    } finally {
+      setResetLoading(false);
+    }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-10">
-      <form onSubmit={handleSubmit} className="p-8 border rounded-lg shadow-md w-full max-w-md bg-white">
+    <div className="flex flex-col items-center justify-center h-auto ">
+      <div className="p-8 border rounded-lg shadow-md w-full max-w-md bg-white">
         <h2 className="text-2xl font-bold text-center mb-6">Company Login</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Company Username</label>
-          <Input 
-            type="text" 
-            name="companyUsername" 
-            value={formData.companyUsername} 
-            onChange={handleChange} 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-            placeholder="Enter your company username"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">Password</label>
-          <Input.Password 
-            name="companyPassword" 
-            value={formData.companyPassword} 
-            onChange={handleChange} 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-        <Button type="primary" htmlType="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white text-lg py-3 rounded-lg font-medium">
-          Login
-        </Button>
-        <p className="text-center mt-4">
-          Don't have an account? 
-          <Button type="link" onClick={() => setIsModalVisible(true)}>
-            Register here
-          </Button>
-        </p>
-      </form>
 
-      {/* Registration Popup */}
-      <Modal title="Company Registration" open={isModalVisible} footer={null} onCancel={() => setIsModalVisible(false)}>
-        <CompanyDataForm onClose={() => setIsModalVisible(false)} />
+        <Form onFinish={handleSubmit} layout="vertical">
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Invalid email format' },
+            ]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
+
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: 'Please enter your password' }]}
+          >
+            <Input.Password placeholder="Enter your password" />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" className="w-full" loading={loading}>
+            Login
+          </Button>
+        </Form>
+
+        <div className="text-center mt-4">
+          <Button type="link" onClick={() => setIsForgotPasswordModalVisible(true)}>
+            Forgot Password?
+          </Button>
+        </div>
+
+        <p className="text-center mt-2">
+          Don't have an account?
+          <Button type="link" onClick={() => setIsRegisterModalVisible(true)}>Register here</Button>
+        </p>
+      </div>
+
+      {/* Registration Modal */}
+      <Modal 
+        title="Company Registration" 
+        open={isRegisterModalVisible} 
+        footer={null} 
+        onCancel={() => setIsRegisterModalVisible(false)}
+      >
+        <CompanyDataForm onClose={() => setIsRegisterModalVisible(false)} />
+      </Modal>
+
+      {/* Forgot Password Modal */}
+      <Modal
+        title="Reset Password"
+        open={isForgotPasswordModalVisible}
+        footer={null}
+        onCancel={() => setIsForgotPasswordModalVisible(false)}
+      >
+        <Form onFinish={handlePasswordReset} layout="vertical">
+          <Form.Item
+            label="Enter your email"
+            name="email"
+            rules={[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Invalid email format' },
+            ]}
+          >
+            <Input placeholder="Enter your email" />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" className="w-full" loading={resetLoading}>
+            Send Reset Link
+          </Button>
+        </Form>
       </Modal>
     </div>
   );

@@ -1,0 +1,29 @@
+auth route 
+http://localhost:8080/api/auth/reset-password/:token
+http://localhost:8080/api/auth/forget-password
+
+
+pass role all time when we change the password
+http://localhost:8080/api/auth/change-password
+
+
+comapany route
+// http://localhost:8080/api/signin/company
+// http://localhost:8080/api/register/company
+patch api
+// http://localhost:8080/api/company/:id
+
+
+employeee route
+//http://localhost:8080/api/register/employee
+//http://localhost:8080/api/signin/employee
+
+patch api
+//http://localhost:8080/api/employee/:id
+
+teammember route
+//http://localhost:8080/api/register/teammember
+//http://localhost:8080/api/signin/teammember
+patch api
+//http://localhost:8080/api/teammember/:id
+

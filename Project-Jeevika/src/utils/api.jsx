@@ -1,70 +1,55 @@
 import axios from "axios";
 
-// ✅ Base API Setup
+// Base API Setup
 const API = axios.create({
   baseURL: "http://localhost:8080/api",
 });
 
-// ✅ Attach Token to Every Request
+// Attach Token to Every Request
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;
 });
 
-// =========================================
-// ✅ AUTHENTICATION APIs (REGISTER & LOGIN)
-// =========================================
 
-// 🔹 Employee Register
-export const registerEmployee = (userData) =>
-  API.post("/auth/register/employee", userData);
 
-// 🔹 Company Register
+// Authentication APIs
+export const resetPassword = (token, data) => 
+  API.post(`/auth/reset-password/${token}`, data);
+
+export const forgetPassword = (data) => 
+  API.post("/auth/forget-password", data);
+
+export const changePassword = (data) => 
+  API.post("/auth/change-password", data);
+
+// Company APIs
 export const registerCompany = (userData) =>
-  API.post("/auth/register/company", userData);
+  API.post("/register/company", userData);
 
-// 🔹 Team Register
-export const registerTeam = (userData) =>
-  API.post("/auth/register/team", userData);
+export const signInCompany = (userData) =>
+  API.post("/signin/company", userData);
 
-// 🔹 Common Login API for All Roles
-export const loginUser = (userData) =>
-  API.post("/auth/login", userData);
+export const updateCompany = (id, userData) =>
+  API.patch(`/company/${id}`, userData);
 
-// =========================================
-// ✅ PROFILE APIs (GET & UPDATE)
-// =========================================
+// Employee APIs
+export const registerEmployee = (userData) =>
+  API.post("/register/employee", userData);
 
-// 🔹 Get Employee Profile
-export const getEmployeeProfile = () =>
-  API.get("/auth/profile/employee");
+export const signInEmployee = (userData) =>
+  API.post("/signin/employee", userData);
 
-// 🔹 Get Company Profile
-export const getCompanyProfile = () =>
-  API.get("/auth/profile/company");
+export const updateEmployee = (id, userData) =>
+  API.patch(`/employee/${id}`, userData);
 
-// 🔹 Get Team Profile
-export const getTeamProfile = () =>
-  API.get("/auth/profile/team");
+// Team Member APIs
+export const registerTeamMember = (userData) =>
+  API.post("/register/teammember", userData);
 
-// 🔹 Update Employee Profile
-export const updateEmployeeProfile = (userData) =>
-  API.put("/employee/profile", userData);
+export const signInTeamMember = (userData) =>
+  API.post("/signin/teammember", userData);
 
-// 🔹 Update Company Profile
-export const updateCompanyProfile = (userData) =>
-  API.put("/company/profile", userData);
-
-// 🔹 Update Team Profile
-export const updateTeamProfile = (userData) =>
-  API.put("/team/profile", userData);
-
-// =========================================
-// ✅ DASHBOARD APIs (IF NEEDED)
-// =========================================
-
-// 🔹 Fetch Dashboard Data Based on Role
-export const getDashboardData = (role) =>
-  API.get(`/dashboard/${role}`);
-
+export const updateTeamMember = (id, userData) =>
+  API.patch(`/teammember/${id}`, userData);

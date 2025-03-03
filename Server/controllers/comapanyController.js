@@ -82,6 +82,7 @@ const  signInCompany = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
         data={
+            id:company._id,
           companyName:company.companyName,
           email:company.email,
           industryDepartment:company.industryDepartment,

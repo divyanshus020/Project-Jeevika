@@ -10,4 +10,4 @@ router.patch('/company/:id',verifyToken,editCompany);
 module.exports = router;
 // http://localhost:8080/api/signin/company
 // http://localhost:8080/api/register/company
-// http://localhost:8080/company/:id
+// http://localhost:8080/api/company/:id

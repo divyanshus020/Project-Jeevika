@@ -10,7 +10,7 @@ const LoginPage = () => {
   return (
     <div className="flex flex-col items-center justify-center py-12">
       <div className="border rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Login</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">HEY THERE!</h1>
         
         {/* Navbar for role selection */}
         <div className="flex justify-around mb-4 border-b pb-2">
