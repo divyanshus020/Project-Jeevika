@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@bradgarropy/next-link": "^1.1.0",
+    "@heroicons/react": "^2.2.0",
     "@tabler/icons-react": "^3.29.0",
     "@tailwindcss/vite": "^4.0.3",
     "antd": "^5.24.0",
@@ -24,8 +25,12 @@
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.5",
     "react-toastify": "^11.0.3",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "^4.0.3",
+    "three": "^0.174.0",
+    "vanta": "^0.5.24",
     "yup": "^1.6.1"
   },
   "devDependencies": {

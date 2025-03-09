@@ -35,13 +35,22 @@ const EmployeeForm = () => {
   const handlePasswordReset = async (values) => {
     setResetLoading(true);
     try {
-      const userType = localStorage.getItem('userType') || 'employee'; // Retrieve userType from localStorage
-      await forgetPassword({ email: values.email, userType });
-
-      message.success('Password reset link sent to your email!');
+      const userType = localStorage.getItem("userType") || "employee";
+  
+      // Make API call to request password reset
+      const response = await forgetPassword({ email: values.email, userType });
+  
+      // Assuming the backend sends a reset token and user ID in response
+      const { resetToken, userId } = response.data;
+  
+      // Store reset token temporarily (optional)
+      localStorage.setItem("resetToken", resetToken);
+      localStorage.setItem("resetUserId", userId);
+  
+      message.success("Password reset link sent to your email!");
       setIsForgotPasswordModalVisible(false);
     } catch (err) {
-      message.error(err.response?.data?.message || 'Failed to send reset link');
+      message.error(err.response?.data?.message || "Failed to send reset link");
     } finally {
       setResetLoading(false);
     }

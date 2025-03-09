@@ -22,9 +22,6 @@ const NavBar = () => {
   // Dropdown menu for registration
   const registrationMenu = (
     <Menu>
-      <Menu.Item key="admin">
-        <Link to="/register/admin">Admin</Link>
-      </Menu.Item>
       <Menu.Item key="employee">
         <Link to="/register/employee">Employee</Link>
       </Menu.Item>

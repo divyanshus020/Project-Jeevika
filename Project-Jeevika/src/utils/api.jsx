@@ -12,8 +12,6 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-
-
 // Authentication APIs
 export const resetPassword = (token, data) => 
   API.post(`/auth/reset-password/${token}`, data);
@@ -34,6 +32,12 @@ export const signInCompany = (userData) =>
 export const updateCompany = (id, userData) =>
   API.patch(`/company/${id}`, userData);
 
+export const getCompanyById = (id) =>
+  API.get(`/company/${id}`);
+
+export const getAllCompanies = () =>
+  API.get("/companies");
+
 // Employee APIs
 export const registerEmployee = (userData) =>
   API.post("/register/employee", userData);
@@ -43,6 +47,12 @@ export const signInEmployee = (userData) =>
 
 export const updateEmployee = (id, userData) =>
   API.patch(`/employee/${id}`, userData);
+
+export const getEmployeeById = (id) =>
+  API.get(`/employee/${id}`);
+
+export const getAllEmployees = () =>
+  API.get("/employees");
 
 // Team Member APIs
 export const registerTeamMember = (userData) =>

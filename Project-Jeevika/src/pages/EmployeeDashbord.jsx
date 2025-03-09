@@ -32,10 +32,9 @@ const EmployeeDashboard = () => {
   const handleLogout = () => setLogoutModalVisible(true);
 
   const confirmLogout = () => {
-    localStorage.removeItem("userData");
-    localStorage.removeItem("token");
+    localStorage.clear();
     message.success("Logged out successfully!");
-    navigate("/");
+    navigate("/", { replace: true });
   };
 
   const handleOpenProfile = () => {

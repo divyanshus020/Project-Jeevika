@@ -1,35 +1,74 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Layout, Modal, Button, message, Descriptions, Input, Form } from "antd";
-import { updateCompany } from "../utils/api";
+import { Layout, Modal, Button, message, Descriptions, Table } from "antd";
+import { getAllEmployees } from "../utils/api";
+import io from "socket.io-client";
 
 const { Content } = Layout;
+const socket = io("http://localhost:8080");
 
 const CompanyDashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [company, setCompany] = useState(location.state?.company || null);
-  const [loading, setLoading] = useState(!company);
+  const [company, setCompany] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [form] = Form.useForm();
+  const [employees, setEmployees] = useState([]);
+  const [employeeLoading, setEmployeeLoading] = useState(false);
+  const [showEmployeeTable, setShowEmployeeTable] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [employeeProfileModal, setEmployeeProfileModal] = useState(false);
 
   useEffect(() => {
-    if (!company) {
-      const storedCompany = localStorage.getItem("companyData");
-      if (storedCompany) {
-        setCompany(JSON.parse(storedCompany));
-        setLoading(false);
-      } else {
-        message.error("Unauthorized access. Redirecting to login.");
-        navigate("/");
-      }
+    const storedCompany = localStorage.getItem("companyData");
+    if (storedCompany) {
+      setCompany(JSON.parse(storedCompany));
+    } else {
+      message.error("Unauthorized access. Redirecting to login.");
+      navigate("/");
     }
-  }, [company, navigate]);
+    setLoading(false);
+  }, [navigate]);
 
-  const handleLogout = () => setLogoutModalVisible(true);
+  const sendEnquiryNotification = (employee) => {
+    if (!company) {
+      message.error("Company data not found. Please log in again.");
+      return;
+    }
+
+    const notificationData = {
+      companyName: company.companyName,
+      employeeName: employee.name,
+    };
+
+    socket.emit("enquiry", notificationData);
+    message.success(`Enquiry sent for ${employee.name}`);
+  };
+
+  const fetchEmployees = async () => {
+    setEmployeeLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await getAllEmployees(token);
+      if (response?.data?.success && Array.isArray(response.data.data)) {
+        setEmployees(response.data.data);
+      } else {
+        message.error("Unexpected response format from server.");
+      }
+    } catch (error) {
+      message.error("Failed to fetch employees.");
+    } finally {
+      setEmployeeLoading(false);
+      setShowEmployeeTable(true);
+    }
+  };
+
+  const handleViewProfile = (employee) => {
+    setSelectedEmployee(employee);
+    setEmployeeProfileModal(true);
+  };
 
   const confirmLogout = () => {
     localStorage.removeItem("companyData");
@@ -38,90 +77,58 @@ const CompanyDashboard = () => {
     navigate("/");
   };
 
-  const handleOpenProfile = () => {
-    setProfileModalVisible(true);
-    setEditMode(false);
-  };
-
-  const handleEditProfile = () => {
-    setEditMode(true);
-    form.setFieldsValue(company);
-  };
-
-  const handleSaveProfile = async () => {
-    try {
-      const values = await form.validateFields();
-      const updatedCompany = await updateCompany(company.id, values);
-      setCompany(updatedCompany);
-      localStorage.setItem("companyData", JSON.stringify(updatedCompany));
-      message.success("Profile updated successfully!");
-      setEditMode(false);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      message.error("Failed to update profile. Please try again.");
-    }
-  };
+  const employeeColumns = [
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Job Role", dataIndex: "jobRole", key: "jobRole" },
+    { title: "Expected Salary", dataIndex: "expectedSalary", key: "expectedSalary" },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <>
+          <Button type="link" onClick={() => handleViewProfile(record)}>View Profile</Button>
+          <Button type="link" onClick={() => sendEnquiryNotification(record)}>Enquiry</Button>
+        </>
+      ),
+    },
+  ];
 
   return (
     <Layout className="w-full h-[80vh] bg-gray-200">
-      {/* Responsive Navbar */}
-      <div className="w-full bg-white p-4 flex flex-wrap justify-between items-center shadow-md">
+      <div className="w-full bg-white p-4 flex justify-between items-center shadow-md">
         <h2 className="text-xl font-bold text-gray-800">Company Dashboard</h2>
-        <div className="flex flex-wrap gap-4">
-          <Button type="primary" onClick={handleOpenProfile}>Profile</Button>
-          <Button type="default" className="border border-gray-400" onClick={() => navigate("/company/employee-card")}>
-            Employee Card
-          </Button>
-          <Button danger onClick={handleLogout}>Logout</Button>
+        <div className="flex gap-4">
+          <Button type="primary" onClick={() => setProfileModalVisible(true)}>Profile</Button>
+          <Button type="default" onClick={fetchEmployees} loading={employeeLoading}>Employee Card</Button>
+          <Button danger onClick={() => setLogoutModalVisible(true)}>Logout</Button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <Content className="flex flex-col justify-center items-center w-full min-h-[80vh] px-4 text-center">
+      <Content className="p-6">
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl">
-            <h1 className="text-3xl font-bold text-gray-800">
-              Welcome, {company?.companyName || "Company"}!
-            </h1>
-            <h2 className="text-xl font-semibold text-gray-700 mt-2">Role: COMPANY</h2>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h1 className="text-3xl font-bold">Welcome, {company?.companyName || "Company"}!</h1>
             <p className="text-gray-600 mt-2">This is your Company Dashboard.</p>
+          </div>
+        )}
+
+        {showEmployeeTable && (
+          <div className="bg-white p-6 mt-4 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-4">Employees</h2>
+            <Table dataSource={employees} columns={employeeColumns} rowKey="_id" pagination={{ pageSize: 5 }} />
           </div>
         )}
       </Content>
 
-      {/* Profile Modal */}
       <Modal
         title="Company Profile"
         open={profileModalVisible}
         onCancel={() => setProfileModalVisible(false)}
-        footer={editMode ? (
-          <>
-            <Button onClick={() => setEditMode(false)}>Cancel</Button>
-            <Button type="primary" onClick={handleSaveProfile}>Save Changes</Button>
-          </>
-        ) : (
-          <Button type="primary" onClick={handleEditProfile}>Edit Profile</Button>
-        )}
+        footer={<Button onClick={() => setProfileModalVisible(false)}>Close</Button>}
       >
-        {editMode ? (
-          <Form form={form} layout="vertical">
-            <Form.Item label="Company Name" name="companyName" rules={[{ required: true, message: "Company Name is required" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Email" name="email" rules={[{ required: true, type: "email", message: "Valid Email is required" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Phone" name="mobileNumber" rules={[{ required: true, message: "Phone Number is required" }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item label="Address" name="address"><Input /></Form.Item>
-            <Form.Item label="Industry" name="industryDepartment"><Input /></Form.Item>
-            <Form.Item label="Category" name="category"><Input /></Form.Item>
-            <Form.Item label="Requirement" name="requirement"><Input /></Form.Item>
-          </Form>
-        ) : company ? (
+        {company ? (
           <Descriptions bordered column={1}>
             <Descriptions.Item label="Company Name">{company.companyName}</Descriptions.Item>
             <Descriptions.Item label="Email">{company.email}</Descriptions.Item>
@@ -136,7 +143,25 @@ const CompanyDashboard = () => {
         )}
       </Modal>
 
-      {/* Logout Confirmation Modal */}
+      <Modal
+        title="Employee Profile"
+        open={employeeProfileModal}
+        onCancel={() => setEmployeeProfileModal(false)}
+        footer={<Button onClick={() => setEmployeeProfileModal(false)}>Close</Button>}
+      >
+        {selectedEmployee ? (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="Name">{selectedEmployee.name}</Descriptions.Item>
+            <Descriptions.Item label="Job Role">{selectedEmployee.jobRole}</Descriptions.Item>
+            <Descriptions.Item label="Experience">{selectedEmployee.workExperience}</Descriptions.Item>
+            <Descriptions.Item label="DOB">{selectedEmployee.dob}</Descriptions.Item>
+            <Descriptions.Item label="Expected Salary">{selectedEmployee.expectedSalary}</Descriptions.Item>
+          </Descriptions>
+        ) : (
+          <p>No employee selected.</p>
+        )}
+      </Modal>
+
       <Modal
         title="Confirm Logout"
         open={logoutModalVisible}

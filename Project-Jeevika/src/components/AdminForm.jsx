@@ -52,7 +52,7 @@ const AdminForm = () => {
         <Form onFinish={handleSubmit} layout="vertical">
           <Form.Item
             label="Admin Username"
-            name="adminUsername"
+            name="email"
             rules={[{ required: true, message: 'Please enter your username' }]}
           >
             <Input placeholder="Enter your admin username" />
@@ -60,7 +60,7 @@ const AdminForm = () => {
 
           <Form.Item
             label="Password"
-            name="adminPassword"
+            name="password"
             rules={[{ required: true, message: 'Please enter your password' }]}
           >
             <Input.Password placeholder="Enter your admin password" />
