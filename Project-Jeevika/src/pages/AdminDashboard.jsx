@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, message, Spin, Form, Modal, Button,notification } from "antd";
 import { getAllEmployees, getAllCompanies } from "../utils/api";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import AdminNavbar from "../components/admin/AdminNavbar";
 import AdminHome from "../components/admin/AdminHome";
 import EmployeeTable from "../components/admin/EmployeeTable";
@@ -13,7 +13,7 @@ import DetailModal from "../components/admin/DetailModal";
 import DashboardStats from "../components/admin/DashboardStats";
 
 const { Content } = Layout;
-const socket = io("http://localhost:8080");
+// const socket = io("http://localhost:8080");
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const AdminDashboard = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [companies, setCompanies] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  // const [notifications, setNotifications] = useState([]);
   const [admin, setAdmin] = useState(null);
   const [createTeamModalVisible, setCreateTeamModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
@@ -53,19 +53,19 @@ const AdminDashboard = () => {
 
 
 
-        // Listen for real-time enquiries from companies
-        socket.on("enquiry", (data) => {
-          setNotifications((prev) => [...prev, data]);
-          notification.info({
-            message: "New Enquiry Received",
-            description: `${data.companyName} sent an enquiry for ${data.employeeName}`,
-            placement: "topRight",
-          });
-        });
+        // // Listen for real-time enquiries from companies
+        // socket.on("enquiry", (data) => {
+        //   setNotifications((prev) => [...prev, data]);
+        //   notification.info({
+        //     message: "New Enquiry Received",
+        //     description: `${data.companyName} sent an enquiry for ${data.employeeName}`,
+        //     placement: "topRight",
+        //   });
+        // });
     
-        return () => {
-          socket.off("enquiry");
-        };
+        // return () => {
+        //   socket.off("enquiry");
+        // };
   }, [navigate]);
 
 
@@ -136,7 +136,7 @@ const AdminDashboard = () => {
       <AdminNavbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        notifications={notifications}
+        // notifications={notifications}
         fetchEmployees={fetchEmployees}
         fetchCompanies={fetchCompanies}
         setCreateTeamModalVisible={setCreateTeamModalVisible}
@@ -151,7 +151,7 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
-            <DashboardStats employeeCount={employees.length} companyCount={companies.length} notifications={notifications} />
+            <DashboardStats employeeCount={employees.length} companyCount={companies.length}  />
 
             <div className="mt-6">
               {activeTab === "home" && <AdminHome admin={admin} />}

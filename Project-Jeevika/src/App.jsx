@@ -13,7 +13,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const RegisterEmployee = lazy(() => import("./pages/EmployeeRegister"));
 const RegisterCompany = lazy(() => import("./pages/CompanyRegsiter"));
 const EmployeeCard = lazy(() => import("./pages/EmployeeList"));
-const Resetpassword = lazy(() => import("./components/ResetPassword"));
+const ResetPassword = lazy(() => import("./components/ResetPassword"));
 
 // Loading fallback component
 const LoadingSpinner = () => <div>Loading...</div>;
@@ -51,8 +51,9 @@ function App() {
             <Route path="/AdminDashboard" element={<AdminDashboard />} />
             <Route path="/company">
               <Route path="employee-card" element={<EmployeeCard />} />
-              <Route path="reset-password" element={<Resetpassword />} />
             </Route>
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+
           </Routes>
         </Suspense>
       </Layout>

@@ -1,40 +1,60 @@
-import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
-import { resetPassword } from "../utils/api"; // Import API function
+import { resetPassword } from "../utils/api"; // API function
 
 const ResetPassword = () => {
   const navigate = useNavigate();
+  const { token } = useParams(); // Get token from URL
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
+  const [validToken, setValidToken] = useState(true);
 
-  const userRole = searchParams.get("role"); // Get role from query parameter
+  const userRole = searchParams.get("role"); // Get role from query params (optional)
+
+  useEffect(() => {
+    if (!token) {
+      message.error("Invalid or expired reset link. Please request a new one.");
+      setValidToken(false);
+    }
+  }, [token]);
 
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        message.error("Invalid or expired token. Please request a new reset link.");
-        navigate("/");
-        return;
-      }
+      console.log("Resetting password with:", { token, values });
 
       const response = await resetPassword(token, values);
+
+      console.log("Response from API:", response);
+
       if (response?.data?.success) {
         message.success("Password reset successfully! Redirecting to login...");
-        localStorage.removeItem("token"); // Remove token after reset
-        navigate("/");
+        navigate("/login"); // Redirect to login page
       } else {
         message.error(response?.data?.message || "Password reset failed.");
       }
     } catch (error) {
       console.error("Error resetting password:", error);
-      message.error("An error occurred. Please try again.");
+      message.error(error?.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (!validToken) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+          <h2 className="text-2xl font-bold text-red-600">Invalid Reset Link</h2>
+          <p className="text-gray-600 mt-2">Please request a new password reset link.</p>
+          <Button type="primary" className="mt-4" onClick={() => navigate("/")}>
+            Go to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

@@ -23,7 +23,7 @@ const LoginPage = () => {
         scale: 1.0,
         scaleMobile: 1.0,
         color: 0xff3f81,
-        backgroundColor: 0x0, // Darker shade for visibility
+        backgroundColor: 0xddff, // Darker shade for visibility
         points: 10.0,
         maxDistance: 20.0,
         spacing: 15.0,
