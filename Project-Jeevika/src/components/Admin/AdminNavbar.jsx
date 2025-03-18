@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Badge, Dropdown, Menu, Avatar, Space, Typography, Modal, Table } from 'antd';
+import React, { useState, useEffect } from "react";
+import { Button, Badge, Modal, Table, Space, Typography } from "antd";
 import { io } from "socket.io-client";
 import {
   BellOutlined,
@@ -7,13 +7,11 @@ import {
   LogoutOutlined,
   TeamOutlined,
   HomeOutlined,
-  UsergroupAddOutlined,
   DatabaseOutlined,
-  EyeOutlined
+  EyeOutlined,
 } from "@ant-design/icons";
 
 const { Title } = Typography;
-
 const socket = io("http://localhost:8080"); // Update with your backend WebSocket URL
 
 const AdminNavbar = ({
@@ -23,73 +21,60 @@ const AdminNavbar = ({
   fetchCompanies,
   setCreateTeamModalVisible,
   setProfileModalVisible,
-  handleLogout
+  handleLogout,
 }) => {
   const [notifications, setNotifications] = useState([]);
   const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
 
-  // WebSocket Connection
+  // ✅ WebSocket: Listen for incoming notifications
   useEffect(() => {
-    socket.on("newNotification", (notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+    socket.on("newEnquiry", (data) => {
+      console.log("🔔 New Notification Received:", data);
+      
+      // ✅ Ensure that companyName and employeeName are properly stored
+      setNotifications((prev) => [
+        {
+          id: Date.now(), // Unique key for the table
+          companyName: data.companyName || "Unknown Company",
+          employeeName: data.employeeName || "Unknown Employee",
+          requestDate: new Date().toLocaleString(),
+        },
+        ...prev,
+      ]);
     });
 
     return () => {
-      socket.off("newNotification");
+      socket.off("newEnquiry");
     };
   }, []);
 
-  // Notification Modal Handlers
+  // ✅ Open Notification Modal
   const handleNotificationClick = () => setIsNotificationModalVisible(true);
+
+  // ✅ Close Notification Modal
   const handleNotificationModalCancel = () => setIsNotificationModalVisible(false);
 
-  const navButtons = [
-    {
-      key: "home",
-      icon: <HomeOutlined />,
-      text: "Home",
-      onClick: () => setActiveTab("home"),
-    },
-    {
-      key: "employee",
-      icon: <UserOutlined />,
-      text: "Employee Data",
-      onClick: () => {
-        setActiveTab("employee");
-        fetchEmployees();
-      },
-    },
-    {
-      key: "company",
-      icon: <DatabaseOutlined />,
-      text: "Company Data",
-      onClick: () => {
-        setActiveTab("company");
-        fetchCompanies();
-      },
-    },
-  ];
-
+  // ✅ Notification Table Columns
   const notificationColumns = [
     {
-      title: 'Company Name',
-      dataIndex: 'companyName',
-      key: 'companyName',
+      title: "Company Name",
+      dataIndex: "companyName",
+      key: "companyName",
     },
     {
-      title: 'Employee Name',
-      dataIndex: 'employeeName',
-      key: 'employeeName',
+      title: "Employee Name",
+      dataIndex: "employeeName",
+      key: "employeeName",
     },
     {
-      title: 'Request Date',
-      dataIndex: 'requestDate',
-      key: 'requestDate',
-      render: (text) => text || 'N/A',
+      title: "Request Date",
+      dataIndex: "requestDate",
+      key: "requestDate",
+      render: (text) => text || "N/A",
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space size="middle">
           <Button type="primary" icon={<EyeOutlined />} onClick={() => handleViewNotificationDetails(record)}>
@@ -100,14 +85,15 @@ const AdminNavbar = ({
     },
   ];
 
+  // ✅ View Notification Details
   const handleViewNotificationDetails = (record) => {
     Modal.info({
-      title: 'Notification Details',
+      title: "Notification Details",
       content: (
         <div>
           <p><strong>Company:</strong> {record.companyName}</p>
           <p><strong>Employee:</strong> {record.employeeName}</p>
-          <p><strong>Request Date:</strong> {record.requestDate || 'N/A'}</p>
+          <p><strong>Request Date:</strong> {record.requestDate || "N/A"}</p>
         </div>
       ),
       onOk() {},
@@ -116,21 +102,38 @@ const AdminNavbar = ({
 
   return (
     <div className="w-full bg-white p-4 flex justify-between items-center shadow-md">
-      <Title level={4} className="mb-0 text-gray-800">
-        Admin Dashboard
-      </Title>
+      <Title level={4} className="mb-0 text-gray-800">Admin Dashboard</Title>
 
       <Space size="middle" className="flex items-center">
-        {navButtons.map((button) => (
-          <Button
-            key={button.key}
-            type={activeTab === button.key ? "primary" : "default"}
-            icon={button.icon}
-            onClick={button.onClick}
-          >
-            {button.text}
-          </Button>
-        ))}
+        <Button
+          type={activeTab === "home" ? "primary" : "default"}
+          icon={<HomeOutlined />}
+          onClick={() => setActiveTab("home")}
+        >
+          Home
+        </Button>
+
+        <Button
+          type={activeTab === "employee" ? "primary" : "default"}
+          icon={<DatabaseOutlined />}
+          onClick={() => {
+            setActiveTab("employee");
+            fetchEmployees();
+          }}
+        >
+          Employee Data
+        </Button>
+
+        <Button
+          type={activeTab === "company" ? "primary" : "default"}
+          icon={<DatabaseOutlined />}
+          onClick={() => {
+            setActiveTab("company");
+            fetchCompanies();
+          }}
+        >
+          Company Data
+        </Button>
 
         <Button type="primary" icon={<TeamOutlined />} onClick={() => setCreateTeamModalVisible(true)}>
           Create Team
@@ -150,7 +153,7 @@ const AdminNavbar = ({
           <Table
             columns={notificationColumns}
             dataSource={notifications}
-            rowKey={(record) => record.id || Math.random()}
+            rowKey={(record) => record.id}
             pagination={{ pageSize: 5, showSizeChanger: true }}
           />
         </Modal>
