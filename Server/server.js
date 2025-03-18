@@ -2,49 +2,57 @@ const app = require("./app");
 const connectDB = require("./config/database");
 const http = require("http");
 const { Server } = require("socket.io");
+const Connection = require('./models/connectionSchema');
 
-// ✅ Create HTTP server and attach Express app
 const server = http.createServer(app);
 
-// ✅ Setup Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173", // Allow frontend to connect
+    origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
     methods: ["GET", "POST"],
   },
 });
 
-// ✅ Handle WebSocket connections
 io.on("connection", (socket) => {
-  console.log(`🔌 New client connected: ${socket.id}`);
+  socket.on("enquiry", async (data) => {
+    try {
+      const { companyName, employeeName, requestDate, companyNumber, employeeNumber } = data;
+      
+      const newConnection = new Connection({
+        companyName,
+        companyNumber,
+        employeeName,
+        employeeNumber,
+        requestDate
+      });
 
-  // ✅ Listen for enquiry event from Company Dashboard
-  socket.on("enquiry", (data) => {
-    const { companyName, employeeName, requestDate } = data;
-
-    // ✅ Log company name, employee name, and request date
-    console.log("📩 Enquiry received:");
-    console.log(`Company Name: ${companyName}`);
-    console.log(`Employee Name: ${employeeName}`);
-    console.log(`Request Date: ${requestDate}`);
-
-    // ✅ Broadcast to all connected admins
-    io.emit("newEnquiry", data);
+      await newConnection.save();
+      io.emit("newEnquiry", newConnection);
+    } catch (error) {
+      socket.emit("error", "Failed to save connection");
+    }
   });
 
-  // ✅ Handle client disconnection
+  socket.on("getConnections", async () => {
+    try {
+      const connections = await Connection.find().sort({ requestDate: -1 });
+      socket.emit("connectionsData", connections);
+    } catch (error) {
+      socket.emit("error", "Failed to fetch connections");
+    }
+  });
+
   socket.on("disconnect", () => {
-    console.log(`❌ Client disconnected: ${socket.id}`);
+    // Handle disconnect event if needed
   });
 });
 
-// ✅ Connect to MongoDB before starting the server
 connectDB()
   .then(() => {
     const PORT = process.env.PORT || 8080;
-    server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+    server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
   })
   .catch((error) => {
-    console.error("❌ MongoDB Connection Failed:", error.message);
-    process.exit(1); // Exit process if DB connection fails
+    console.error("MongoDB Connection Failed:", error.message);
+    process.exit(1);
   });

@@ -3,30 +3,21 @@ import { Table, Typography, Card } from "antd";
 import { io } from "socket.io-client";
 
 const { Title } = Typography;
-const socket = io("http://localhost:8080"); // Update with your backend WebSocket URL
+const socket = io("http://localhost:8080");
 
 const ConnectTable = () => {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // WebSocket: Listen for incoming connection data
   useEffect(() => {
-    setLoading(true);
-    
-    // Request initial connections data from server
     socket.emit("getConnections");
     
-    // Listen for initial connections data
     socket.on("connectionsData", (data) => {
-      console.log("📊 Initial Connections Data Received:", data);
       setConnections(data);
       setLoading(false);
     });
     
-    // Listen for new connection requests
     socket.on("newEnquiry", (data) => {
-      console.log("🔌 New Connection Data Received:", data);
-      
       setConnections((prev) => [
         {
           id: Date.now(),
@@ -40,9 +31,7 @@ const ConnectTable = () => {
       ]);
     });
 
-    // Handle connection errors
     socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
       setLoading(false);
     });
 
@@ -53,7 +42,6 @@ const ConnectTable = () => {
     };
   }, []);
 
-  // Connection Table Columns
   const connectionColumns = [
     {
       title: "Company Name",
