@@ -20,7 +20,13 @@ io.on("connection", (socket) => {
 
   // ✅ Listen for enquiry event from Company Dashboard
   socket.on("enquiry", (data) => {
-    console.log("📩 Enquiry received:", data);
+    const { companyName, employeeName, requestDate } = data;
+
+    // ✅ Log company name, employee name, and request date
+    console.log("📩 Enquiry received:");
+    console.log(`Company Name: ${companyName}`);
+    console.log(`Employee Name: ${employeeName}`);
+    console.log(`Request Date: ${requestDate}`);
 
     // ✅ Broadcast to all connected admins
     io.emit("newEnquiry", data);
@@ -42,5 +48,3 @@ connectDB()
     console.error("❌ MongoDB Connection Failed:", error.message);
     process.exit(1); // Exit process if DB connection fails
   });
-
-  
