@@ -1,2 +1,9 @@
 @import "tailwindcss";
 
+/* admin navbar menu btn resposnive  */
+
+@media (min-width: 768px) {
+    .mobile-menu-btn {
+      display: none !important;
+    }
+  }

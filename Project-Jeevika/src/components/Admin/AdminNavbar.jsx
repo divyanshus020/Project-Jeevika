@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Space, Typography } from "antd";
+import React, { useState } from "react";
+import { Button, Space, Typography, Drawer } from "antd";
 import {
   UserOutlined,
   LogoutOutlined,
@@ -7,6 +7,7 @@ import {
   HomeOutlined,
   DatabaseOutlined,
   LinkOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -20,61 +21,125 @@ const AdminNavbar = ({
   setProfileModalVisible,
   handleLogout,
 }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const NavButtons = () => (
+    <Space direction={mobileMenuOpen ? "vertical" : "horizontal"} size="middle" className="items-center">
+      <Button
+        type={activeTab === "home" ? "primary" : "default"}
+        icon={<HomeOutlined />}
+        onClick={() => {
+          setActiveTab("home");
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Home
+      </Button>
+
+      <Button
+        type={activeTab === "employee" ? "primary" : "default"}
+        icon={<DatabaseOutlined />}
+        onClick={() => {
+          setActiveTab("employee");
+          fetchEmployees();
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Employee Data
+      </Button>
+
+      <Button
+        type={activeTab === "company" ? "primary" : "default"}
+        icon={<DatabaseOutlined />}
+        onClick={() => {
+          setActiveTab("company");
+          fetchCompanies();
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Company Data
+      </Button>
+
+      <Button
+        type={activeTab === "connect" ? "primary" : "default"}
+        icon={<LinkOutlined />}
+        onClick={() => {
+          setActiveTab("connect");
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Connect
+      </Button>
+
+      <Button
+        type="primary"
+        icon={<TeamOutlined />}
+        onClick={() => {
+          setCreateTeamModalVisible(true);
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Create Team
+      </Button>
+
+      <Button
+        type="primary"
+        icon={<UserOutlined />}
+        onClick={() => {
+          setProfileModalVisible(true);
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Profile
+      </Button>
+
+      <Button
+        danger
+        icon={<LogoutOutlined />}
+        onClick={() => {
+          handleLogout();
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Logout
+      </Button>
+    </Space>
+  );
+
   return (
     <div className="w-full bg-white p-4 flex justify-between items-center shadow-md">
       <Title level={4} className="mb-0 text-gray-800">Admin Dashboard</Title>
 
-      <Space size="middle" className="flex items-center">
-        <Button
-          type={activeTab === "home" ? "primary" : "default"}
-          icon={<HomeOutlined />}
-          onClick={() => setActiveTab("home")}
-        >
-          Home
-        </Button>
+      {/* Desktop Navigation */}
+      <div className="hidden md:block">
+        <NavButtons />
+      </div>
 
-        <Button
-          type={activeTab === "employee" ? "primary" : "default"}
-          icon={<DatabaseOutlined />}
-          onClick={() => {
-            setActiveTab("employee");
-            fetchEmployees();
-          }}
-        >
-          Employee Data
-        </Button>
+      {/* Mobile Menu Button */}
+      <Button
+        icon={<MenuOutlined />}
+        className="mobile-menu-btn"
+        onClick={() => setMobileMenuOpen(true)}
+      />
 
-        <Button
-          type={activeTab === "company" ? "primary" : "default"}
-          icon={<DatabaseOutlined />}
-          onClick={() => {
-            setActiveTab("company");
-            fetchCompanies();
-          }}
-        >
-          Company Data
-        </Button>
 
-        <Button
-          type={activeTab === "connect" ? "primary" : "default"}
-          icon={<LinkOutlined />}
-          onClick={() => setActiveTab("connect")}
-        >
-          Connect
-        </Button>
-
-        <Button type="primary" icon={<TeamOutlined />} onClick={() => setCreateTeamModalVisible(true)}>
-          Create Team
-        </Button>
-
-        <Button type="primary" icon={<UserOutlined />} onClick={() => setProfileModalVisible(true)}>
-          Profile
-        </Button>
-
-        <Button danger icon={<LogoutOutlined />} onClick={handleLogout}>
-          Logout
-        </Button>
-      </Space>
+      {/* Mobile Navigation Drawer */}
+      <Drawer
+        title="Menu"
+        placement="right"
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        className="md:hidden"
+      >
+        <NavButtons />
+      </Drawer>
     </div>
   );
 };
