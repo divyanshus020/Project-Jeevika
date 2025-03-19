@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Layout, message, Spin, Form, Modal, Button,notification } from "antd";
+import { Layout, message, Spin, Form, Modal, Button, notification } from "antd";
 import { getAllEmployees, getAllCompanies } from "../utils/api";
 // import io from "socket.io-client";
 import AdminNavbar from "../components/admin/AdminNavbar";
@@ -134,11 +134,11 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
-            <DashboardStats employeeCount={employees.length} companyCount={companies.length} connectionCount={connectionCount}  />
+            <DashboardStats employeeCount={employees.length} companyCount={companies.length} connectionCount={connectionCount} />
 
             <div className="mt-6">
               {activeTab === "home" && <AdminHome admin={admin} />}
-              {activeTab === "connect" && <ConnectTable/>}
+              {activeTab === "connect" && <ConnectTable />}
               {activeTab === "employee" && (
                 <EmployeeTable
                   employees={employees}
@@ -155,6 +155,7 @@ const AdminDashboard = () => {
                   setDetailModalVisible={setDetailModalVisible}
                 />
               )}
+
             </div>
           </>
         )}

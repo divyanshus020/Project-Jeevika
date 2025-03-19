@@ -6,7 +6,7 @@ const { Title } = Typography;
 const { Search } = Input;
 const socket = io("http://localhost:8080");
 
-const ConnectTable = ({ setConnectionCount }) => {
+const ConnectTable = () => {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -16,29 +16,27 @@ const ConnectTable = ({ setConnectionCount }) => {
 
     socket.on("connectionsData", (data) => {
       setConnections(data);
-      setConnectionCount(data.length); // Update connection count
       setLoading(false);
     });
 
     socket.on("newEnquiry", (data) => {
-      const newConnection = {
-        id: Date.now(),
-        companyName: data.companyName || "Unknown Company",
-        companyNumber: data.companyNumber || "N/A",
-        employeeName: data.employeeName || "Unknown Employee",
-        employeeNumber: data.employeeNumber || "N/A",
-        requestDate: new Date().toLocaleString(),
-      };
-
-      setConnections((prev) => [newConnection, ...prev]);
-      setConnectionCount((prevCount) => prevCount + 1); // Increment count
+      setConnections((prev) => [
+        {
+          id: Date.now(),
+          companyName: data.companyName || "Unknown Company",
+          companyNumber: data.companyNumber || "N/A",
+          employeeName: data.employeeName || "Unknown Employee",
+          employeeNumber: data.employeeNumber || "N/A",
+          requestDate: new Date().toLocaleString(),
+        },
+        ...prev,
+      ]);
     });
 
     socket.on("requestRemoved", (connectionId) => {
       setConnections((prevConnections) =>
         prevConnections.filter((conn) => conn._id !== connectionId)
       );
-      setConnectionCount((prevCount) => prevCount - 1); // Decrement count
     });
 
     socket.on("connect_error", () => {
@@ -51,12 +49,13 @@ const ConnectTable = ({ setConnectionCount }) => {
       socket.off("connect_error");
       socket.off("requestRemoved");
     };
-  }, [setConnectionCount]);
+  }, []);
 
   const handleDone = (connectionId) => {
     socket.emit("markAsDone", connectionId);
   };
 
+  // Filter data globally across all columns
   const filteredConnections = connections.filter((connection) =>
     Object.values(connection).some(
       (value) =>
@@ -66,11 +65,31 @@ const ConnectTable = ({ setConnectionCount }) => {
   );
 
   const connectionColumns = [
-    { title: "Company Name", dataIndex: "companyName", key: "companyName" },
-    { title: "Company Number", dataIndex: "companyNumber", key: "companyNumber" },
-    { title: "Employee Name", dataIndex: "employeeName", key: "employeeName" },
-    { title: "Employee Number", dataIndex: "employeeNumber", key: "employeeNumber" },
-    { title: "Request Date", dataIndex: "requestDate", key: "requestDate" },
+    {
+      title: "Company Name",
+      dataIndex: "companyName",
+      key: "companyName",
+    },
+    {
+      title: "Company Number",
+      dataIndex: "companyNumber",
+      key: "companyNumber",
+    },
+    {
+      title: "Employee Name",
+      dataIndex: "employeeName",
+      key: "employeeName",
+    },
+    {
+      title: "Employee Number",
+      dataIndex: "employeeNumber",
+      key: "employeeNumber",
+    },
+    {
+      title: "Request Date",
+      dataIndex: "requestDate",
+      key: "requestDate",
+    },
     {
       title: "Action",
       key: "action",
