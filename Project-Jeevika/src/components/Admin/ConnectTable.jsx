@@ -13,9 +13,17 @@ const ConnectTable = () => {
   useEffect(() => {
     setLoading(true);
     
-    // Initial data fetch could go here
-    // For example: fetchConnections();
+    // Request initial connections data from server
+    socket.emit("getConnections");
     
+    // Listen for initial connections data
+    socket.on("connectionsData", (data) => {
+      console.log("📊 Initial Connections Data Received:", data);
+      setConnections(data);
+      setLoading(false);
+    });
+    
+    // Listen for new connection requests
     socket.on("newEnquiry", (data) => {
       console.log("🔌 New Connection Data Received:", data);
       
@@ -30,35 +38,18 @@ const ConnectTable = () => {
         },
         ...prev,
       ]);
-      
+    });
+
+    // Handle connection errors
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
       setLoading(false);
     });
 
-    // Simulate initial data for demonstration
-    setTimeout(() => {
-      setConnections([
-        {
-          id: 1,
-          companyName: "ABC Corp",
-          companyNumber: "9876543210",
-          employeeName: "John Doe",
-          employeeNumber: "1234567890",
-          requestDate: new Date().toLocaleString(),
-        },
-        {
-          id: 2,
-          companyName: "XYZ Industries",
-          companyNumber: "8765432109",
-          employeeName: "Jane Smith",
-          employeeNumber: "2345678901",
-          requestDate: new Date().toLocaleString(),
-        }
-      ]);
-      setLoading(false);
-    }, 1000);
-
     return () => {
+      socket.off("connectionsData");
       socket.off("newEnquiry");
+      socket.off("connect_error");
     };
   }, []);
 
