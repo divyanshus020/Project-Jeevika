@@ -1,9 +1,26 @@
 import React, { useState } from "react";
-import { Table, Button, Modal, Descriptions, Divider } from "antd";
+import { Table, Button, Modal, Descriptions, Divider, Input } from "antd";
+
+const { Search } = Input;
 
 const CompanyTable = ({ companies, dataLoading }) => {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const handleModalClose = () => {
+    setDetailModalVisible(false);
+    setSelectedCompany(null);
+  };
+
+  // Filter companies across all fields
+  const filteredCompanies = companies.filter((company) =>
+    Object.values(company).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     { title: "Company Name", dataIndex: "companyName", key: "companyName" },
@@ -26,16 +43,21 @@ const CompanyTable = ({ companies, dataLoading }) => {
     },
   ];
 
-  const handleModalClose = () => {
-    setDetailModalVisible(false);
-    setSelectedCompany(null);
-  };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-4xl">
       <h2 className="text-2xl font-bold mb-4">Company Data</h2>
+
+      {/* Global Search Box */}
+      <Search
+        placeholder="Search companies..."
+        onChange={(e) => setSearchText(e.target.value)}
+        allowClear
+        className="mb-4"
+      />
+
+      {/* Company Table */}
       <Table
-        dataSource={companies}
+        dataSource={filteredCompanies}
         columns={columns}
         rowKey="_id"
         loading={dataLoading}
@@ -61,7 +83,7 @@ const CompanyTable = ({ companies, dataLoading }) => {
               <Descriptions.Item label="Category">{selectedCompany.category}</Descriptions.Item>
               <Descriptions.Item label="Founded Date">{selectedCompany.foundedDate}</Descriptions.Item>
             </Descriptions>
-            
+
             <Divider />
 
             <Descriptions bordered column={1} size="middle">

@@ -31,6 +31,7 @@ const AdminDashboard = () => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [connectionCount, setConnectionCount] = useState(0);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -52,21 +53,6 @@ const AdminDashboard = () => {
     };
     initializeDashboard();
 
-
-
-        // // Listen for real-time enquiries from companies
-        // socket.on("enquiry", (data) => {
-        //   setNotifications((prev) => [...prev, data]);
-        //   notification.info({
-        //     message: "New Enquiry Received",
-        //     description: `${data.companyName} sent an enquiry for ${data.employeeName}`,
-        //     placement: "topRight",
-        //   });
-        // });
-    
-        // return () => {
-        //   socket.off("enquiry");
-        // };
   }, [navigate]);
 
 
@@ -148,7 +134,7 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
-            <DashboardStats employeeCount={employees.length} companyCount={companies.length}  />
+            <DashboardStats employeeCount={employees.length} companyCount={companies.length} connectionCount={connectionCount}  />
 
             <div className="mt-6">
               {activeTab === "home" && <AdminHome admin={admin} />}

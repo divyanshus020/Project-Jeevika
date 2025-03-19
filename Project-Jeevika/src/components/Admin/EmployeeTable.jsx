@@ -1,9 +1,26 @@
 import React, { useState } from "react";
-import { Table, Button, Modal, Descriptions, Divider } from "antd";
+import { Table, Button, Modal, Descriptions, Divider, Input } from "antd";
+
+const { Search } = Input;
 
 const EmployeeTable = ({ employees, dataLoading }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const handleModalClose = () => {
+    setDetailModalVisible(false);
+    setSelectedEmployee(null);
+  };
+
+  // Filter data globally across all fields
+  const filteredEmployees = employees.filter((employee) =>
+    Object.values(employee).some(
+      (value) =>
+        value &&
+        value.toString().toLowerCase().includes(searchText.toLowerCase())
+    )
+  );
 
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
@@ -26,16 +43,21 @@ const EmployeeTable = ({ employees, dataLoading }) => {
     },
   ];
 
-  const handleModalClose = () => {
-    setDetailModalVisible(false);
-    setSelectedEmployee(null);
-  };
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-4xl">
       <h2 className="text-2xl font-bold mb-4">Employee Data</h2>
+
+      {/* Global Search Box */}
+      <Search
+        placeholder="Search employees..."
+        onChange={(e) => setSearchText(e.target.value)}
+        allowClear
+        className="mb-4"
+      />
+
+      {/* Employee Table */}
       <Table
-        dataSource={employees}
+        dataSource={filteredEmployees}
         columns={columns}
         rowKey="_id"
         loading={dataLoading}
