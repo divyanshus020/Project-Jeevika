@@ -11,6 +11,7 @@ import CreateTeamModal from "../components/admin/CreateTeamModal";
 import ProfileModal from "../components/admin/ProfileModal";
 import DetailModal from "../components/admin/DetailModal";
 import DashboardStats from "../components/admin/DashboardStats";
+import ConnectTable from "../components/admin/ConnectTable";
 
 const { Content } = Layout;
 // const socket = io("http://localhost:8080");
@@ -155,6 +156,7 @@ const AdminDashboard = () => {
 
             <div className="mt-6">
               {activeTab === "home" && <AdminHome admin={admin} />}
+              {activeTab === "connect" && <ConnectTable/>}
               {activeTab === "employee" && (
                 <EmployeeTable
                   employees={employees}
