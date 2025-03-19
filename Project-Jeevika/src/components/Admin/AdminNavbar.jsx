@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Badge, Modal, Table, Space, Typography } from "antd";
+import { Button, Modal, Table, Space, Typography } from "antd";
 import { io } from "socket.io-client";
 import {
-  BellOutlined,
   UserOutlined,
   LogoutOutlined,
   TeamOutlined,
   HomeOutlined,
   DatabaseOutlined,
-  EyeOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -23,20 +22,22 @@ const AdminNavbar = ({
   setProfileModalVisible,
   handleLogout,
 }) => {
-  const [notifications, setNotifications] = useState([]);
-  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
+  const [connections, setConnections] = useState([]);
+  const [isConnectModalVisible, setIsConnectModalVisible] = useState(false);
 
-  // ✅ WebSocket: Listen for incoming notifications
+  // ✅ WebSocket: Listen for incoming connection data
   useEffect(() => {
     socket.on("newEnquiry", (data) => {
-      console.log("🔔 New Notification Received:", data);
+      console.log("🔌 New Connection Data Received:", data);
       
-      // ✅ Ensure that companyName and employeeName are properly stored
-      setNotifications((prev) => [
+      // ✅ Store connection data with company and employee details
+      setConnections((prev) => [
         {
           id: Date.now(), // Unique key for the table
           companyName: data.companyName || "Unknown Company",
+          companyNumber: data.companyNumber || "N/A",
           employeeName: data.employeeName || "Unknown Employee",
+          employeeNumber: data.employeeNumber || "N/A",
           requestDate: new Date().toLocaleString(),
         },
         ...prev,
@@ -48,18 +49,23 @@ const AdminNavbar = ({
     };
   }, []);
 
-  // ✅ Open Notification Modal
-  const handleNotificationClick = () => setIsNotificationModalVisible(true);
+  // ✅ Open Connect Modal
+  const handleConnectClick = () => setIsConnectModalVisible(true);
 
-  // ✅ Close Notification Modal
-  const handleNotificationModalCancel = () => setIsNotificationModalVisible(false);
+  // ✅ Close Connect Modal
+  const handleConnectModalCancel = () => setIsConnectModalVisible(false);
 
-  // ✅ Notification Table Columns
-  const notificationColumns = [
+  // ✅ Connection Table Columns
+  const connectionColumns = [
     {
       title: "Company Name",
       dataIndex: "companyName",
       key: "companyName",
+    },
+    {
+      title: "Company Number",
+      dataIndex: "companyNumber",
+      key: "companyNumber",
     },
     {
       title: "Employee Name",
@@ -67,38 +73,16 @@ const AdminNavbar = ({
       key: "employeeName",
     },
     {
+      title: "Employee Number",
+      dataIndex: "employeeNumber",
+      key: "employeeNumber",
+    },
+    {
       title: "Request Date",
       dataIndex: "requestDate",
       key: "requestDate",
-      render: (text) => text || "N/A",
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="primary" icon={<EyeOutlined />} onClick={() => handleViewNotificationDetails(record)}>
-            View Details
-          </Button>
-        </Space>
-      ),
     },
   ];
-
-  // ✅ View Notification Details
-  const handleViewNotificationDetails = (record) => {
-    Modal.info({
-      title: "Notification Details",
-      content: (
-        <div>
-          <p><strong>Company:</strong> {record.companyName}</p>
-          <p><strong>Employee:</strong> {record.employeeName}</p>
-          <p><strong>Request Date:</strong> {record.requestDate || "N/A"}</p>
-        </div>
-      ),
-      onOk() {},
-    });
-  };
 
   return (
     <div className="w-full bg-white p-4 flex justify-between items-center shadow-md">
@@ -139,20 +123,24 @@ const AdminNavbar = ({
           Create Team
         </Button>
 
-        <Badge count={notifications.length} offset={[10, -5]}>
-          <Button shape="circle" icon={<BellOutlined />} onClick={handleNotificationClick} />
-        </Badge>
+        <Button 
+          type="primary" 
+          icon={<LinkOutlined />} 
+          onClick={handleConnectClick}
+        >
+          Connect
+        </Button>
 
         <Modal
-          title="Notifications"
-          visible={isNotificationModalVisible}
-          onCancel={handleNotificationModalCancel}
+          title="Connection Requests"
+          visible={isConnectModalVisible}
+          onCancel={handleConnectModalCancel}
           footer={null}
-          width={800}
+          width={1000}
         >
           <Table
-            columns={notificationColumns}
-            dataSource={notifications}
+            columns={connectionColumns}
+            dataSource={connections}
             rowKey={(record) => record.id}
             pagination={{ pageSize: 5, showSizeChanger: true }}
           />
