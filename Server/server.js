@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_ORIGIN || "http://localhost:5173",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
   },
 });
 
@@ -39,6 +39,16 @@ io.on("connection", (socket) => {
       socket.emit("connectionsData", connections);
     } catch (error) {
       socket.emit("error", "Failed to fetch connections");
+    }
+  });
+
+  // New event handler for marking requests as done
+  socket.on("markAsDone", async (connectionId) => {
+    try {
+      await Connection.findByIdAndDelete(connectionId);
+      io.emit("requestRemoved", connectionId);
+    } catch (error) {
+      socket.emit("error", "Failed to mark request as done");
     }
   });
 

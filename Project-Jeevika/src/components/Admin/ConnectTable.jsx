@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Typography, Card } from "antd";
+import { Table, Typography, Card, Button } from "antd"; // Added Button import
 import { io } from "socket.io-client";
 
 const { Title } = Typography;
@@ -31,6 +31,12 @@ const ConnectTable = () => {
       ]);
     });
 
+    socket.on("requestRemoved", (connectionId) => {
+      setConnections(prevConnections => 
+        prevConnections.filter(conn => conn._id !== connectionId)
+      );
+    });
+
     socket.on("connect_error", (error) => {
       setLoading(false);
     });
@@ -39,8 +45,13 @@ const ConnectTable = () => {
       socket.off("connectionsData");
       socket.off("newEnquiry");
       socket.off("connect_error");
+      socket.off("requestRemoved");
     };
   }, []);
+
+  const handleDone = (connectionId) => {
+    socket.emit("markAsDone", connectionId);
+  };
 
   const connectionColumns = [
     {
@@ -67,6 +78,18 @@ const ConnectTable = () => {
       title: "Request Date",
       dataIndex: "requestDate",
       key: "requestDate",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button 
+          type="primary"
+          onClick={() => handleDone(record._id)}
+        >
+          Done
+        </Button>
+      ),
     },
   ];
 

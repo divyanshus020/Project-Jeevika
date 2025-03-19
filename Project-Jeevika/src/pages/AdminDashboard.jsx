@@ -71,15 +71,11 @@ const AdminDashboard = () => {
 
 
 
-
-
-  
-
   const fetchEmployees = async () => {
     setDataLoading(true);
     try {
       const response = await getAllEmployees();
-      console.log("Employee Response:", response);
+      // console.log("Employee Response:", response);
       const employeeData = Array.isArray(response.data.data) ? response.data.data : [];
       setEmployees(employeeData);
     } catch (error) {
@@ -95,7 +91,7 @@ const AdminDashboard = () => {
     setDataLoading(true);
     try {
       const response = await getAllCompanies();
-      console.log("Companies Response:", response);
+      // console.log("Companies Response:", response);
       const companyData = Array.isArray(response.data.data) ? response.data.data : [];
       setCompanies(companyData);
     } catch (error) {
