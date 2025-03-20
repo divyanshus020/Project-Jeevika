@@ -8,10 +8,25 @@ const CreateTeamModal = ({ visible, setVisible, fetchTeamMembers }) => {
     try {
       const response = await registerTeamMember(values);
       if (response?.data?.success) {
-        message.success("Team member created successfully!");
-        form.resetFields();
-        setVisible(false);
-        if (fetchTeamMembers) fetchTeamMembers(); // Refresh list if needed
+        // Show a more prominent success message
+        message.success({
+          content: "Team member created successfully!",
+          duration: 5,
+          style: {
+            marginTop: '20vh',
+          },
+        });
+        
+        // Show a modal confirmation
+        Modal.success({
+          title: 'Success!',
+          content: 'Team member has been created successfully.',
+          onOk: () => {
+            form.resetFields(); // Clear the form
+            setVisible(false);
+            if (fetchTeamMembers) fetchTeamMembers(); // Refresh list if needed
+          }
+        });
       } else {
         message.error(response?.data?.message || "Failed to create team member.");
       }
@@ -20,6 +35,7 @@ const CreateTeamModal = ({ visible, setVisible, fetchTeamMembers }) => {
       message.error("An error occurred while creating the team member.");
     }
   };
+  
 
   return (
     <Modal

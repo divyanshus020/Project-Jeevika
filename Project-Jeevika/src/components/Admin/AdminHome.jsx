@@ -2,7 +2,7 @@ import React from 'react';
 
 const AdminHome = ({ admin }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full h-full">
       <h1 className="text-3xl font-bold text-gray-800">
         Welcome, {admin?._doc?.teamUserName || "Admin"}!
       </h1>

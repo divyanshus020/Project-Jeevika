@@ -115,7 +115,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Layout className="w-full h-[100vh] bg-gray-100">
+    <Layout className="w-full h-full bg-gray-100">
       <AdminNavbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
