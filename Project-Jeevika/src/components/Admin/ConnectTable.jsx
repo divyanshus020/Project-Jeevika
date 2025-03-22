@@ -10,7 +10,7 @@ const ConnectTable = () => {
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState("");
-
+ 
   useEffect(() => {
     socket.emit("getConnections");
 
@@ -20,6 +20,7 @@ const ConnectTable = () => {
     });
 
     socket.on("newEnquiry", (data) => {
+      console.log("Received new enquiry:", data);
       setConnections((prev) => [
         {
           id: Date.now(),
@@ -100,7 +101,7 @@ const ConnectTable = () => {
       ),
     },
   ];
-
+   console.log("filterred",filteredConnections)
   return (
     <Card className="w-full shadow-md">
       <Title level={4} className="mb-4">Connection Requests</Title>

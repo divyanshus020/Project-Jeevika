@@ -14,14 +14,14 @@ const CompanyForm = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      const userType = localStorage.getItem('userType') || 'company'; // Retrieve userType from localStorage
+      const userType = sessionStorage.getItem('userType') || 'company'; // Retrieve userType from sessionStorage
       const response = await signInCompany({ ...values, userType });
 
       // Store authentication details securely
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('companyData', JSON.stringify(response.data.data));
-      localStorage.setItem('role', 'company'); // Store user role
-      localStorage.setItem('userType', userType); // Store userType
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('companyData', JSON.stringify(response.data.data));
+      sessionStorage.setItem('role', 'company'); // Store user role
+      sessionStorage.setItem('userType', userType); // Store userType
 
       message.success('Login successful! Redirecting...');
       navigate('/CompanyDashboard', { state: { company: response.data.data } });
@@ -35,7 +35,7 @@ const CompanyForm = () => {
   const handlePasswordReset = async (values) => {
     setResetLoading(true);
     try {
-      const userType = localStorage.getItem('userType') || 'company'; // Retrieve userType from localStorage
+      const userType = sessionStorage.getItem('userType') || 'company'; // Retrieve userType from sessionStorage
       await forgetPassword({ email: values.email, userType });
 
       message.success('Password reset link sent to your email!');

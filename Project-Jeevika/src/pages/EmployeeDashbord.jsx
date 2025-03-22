@@ -18,7 +18,7 @@ const EmployeeDashboard = () => {
 
   useEffect(() => {
     if (!employee) {
-      const storedEmployee = localStorage.getItem("userData");
+      const storedEmployee = sessionStorage.getItem("userData");
       if (storedEmployee) {
         setEmployee(JSON.parse(storedEmployee));
         setLoading(false);
@@ -32,7 +32,7 @@ const EmployeeDashboard = () => {
   const handleLogout = () => setLogoutModalVisible(true);
 
   const confirmLogout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     message.success("Logged out successfully!");
     navigate("/", { replace: true });
   };
@@ -52,7 +52,7 @@ const EmployeeDashboard = () => {
       const values = await form.validateFields();
       const updatedEmployee = await updateEmployee(employee.id, values);
       setEmployee(updatedEmployee);
-      localStorage.setItem("userData", JSON.stringify(updatedEmployee));
+      sessionStorage.setItem("userData", JSON.stringify(updatedEmployee));
       message.success("Profile updated successfully!");
       setEditMode(false);
     } catch (error) {

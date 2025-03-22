@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, NavLink } from "react-router-dom";
 import { Dropdown, Menu, Button } from "antd";
 
 const NavBar = () => {
@@ -8,8 +8,7 @@ const NavBar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check authentication status whenever the location changes
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     setIsAuthenticated(!!token);
   }, [location]);
 
@@ -19,7 +18,6 @@ const NavBar = () => {
     { id: 3, name: "Hire", path: "/Hire" },
   ];
 
-  // Dropdown menu for registration
   const registrationMenu = (
     <Menu>
       <Menu.Item key="employee">
@@ -32,18 +30,17 @@ const NavBar = () => {
   );
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
+    <nav className="bg-gray-100 border-b border-gray-200">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center text-2xl font-semibold text-gray-800">
             JEEVIKA
           </span>
         </Link>
 
-        {/* Menu Toggle Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
           aria-controls="navbar-default"
           aria-expanded={isMenuOpen}
         >
@@ -65,35 +62,34 @@ const NavBar = () => {
           </svg>
         </button>
 
-        {/* Navigation Links */}
         <div className={`w-full md:flex md:w-auto ${isMenuOpen ? "block" : "hidden"}`} id="navbar-default">
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0">
             {navLinks.map((link) => (
               <li key={link.id}>
-                <Link
+                <NavLink
                   to={link.path}
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded md:p-0 hover:bg-gray-200 hover:text-gray-900 ${
+                      isActive ? "bg-blue-500 text-white" : "text-gray-700"
+                    }`
+                  }
                 >
                   {link.name}
-                </Link>
+                </NavLink>
               </li>
             ))}
 
-            {/* Register Dropdown Button */}
             <li>
               <Dropdown overlay={registrationMenu} trigger={['click']}>
-                <Button className="block py-2 px-4 bg-blue-500 text-white rounded md:hover:bg-blue-600">
-                  Register
-                </Button>
+                <Button className="py-2 px-4 bg-blue-500 text-white rounded md:hover:bg-blue-700">Register</Button>
               </Dropdown>
             </li>
 
-            {/* Login Button */}
             {!isAuthenticated && (
               <li>
                 <Link
                   to="/Login"
-                  className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-gray-700 rounded md:p-0 hover:bg-gray-200 hover:text-gray-900"
                 >
                   Login
                 </Link>
@@ -107,3 +103,4 @@ const NavBar = () => {
 };
 
 export default NavBar;
+

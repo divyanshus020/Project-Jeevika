@@ -17,7 +17,7 @@ io.on("connection", (socket) => {
   socket.on("enquiry", async (data) => {
     try {
       const { companyName, employeeName, requestDate, companyNumber, employeeNumber } = data;
-      
+      console.log(data);
       const newConnection = new Connection({
         companyName,
         companyNumber,

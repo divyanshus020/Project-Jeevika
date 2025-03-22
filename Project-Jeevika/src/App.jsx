@@ -14,7 +14,8 @@ const RegisterEmployee = lazy(() => import("./pages/EmployeeRegister"));
 const RegisterCompany = lazy(() => import("./pages/CompanyRegsiter"));
 const EmployeeCard = lazy(() => import("./pages/EmployeeList"));
 const ResetPassword = lazy(() => import("./components/ResetPassword"));
-
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 // Loading fallback component
 const LoadingSpinner = () => <div>Loading...</div>;
 
@@ -42,6 +43,8 @@ function App() {
             <Route path="/Employee" element={<Employee />} />
             <Route path="/Hire" element={<Hire />} />
             <Route path="/Login" element={<Login />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
             <Route path="/register">
               <Route path="employee" element={<RegisterEmployee />} />
               <Route path="company" element={<RegisterCompany />} />

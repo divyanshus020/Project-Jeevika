@@ -14,14 +14,14 @@ const EmployeeForm = () => {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      const userType = localStorage.getItem('userType') || 'employee'; // Retrieve userType from localStorage
+      const userType = sessionStorage.getItem('userType') || 'employee'; // Retrieve userType from sessionStorage
       const response = await signInEmployee({ ...values, userType });
 
       // Store authentication details securely
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userData', JSON.stringify(response.data.data));
-      localStorage.setItem('role', 'employee'); // Store user role
-      localStorage.setItem('userType', userType); // Store userType
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('userData', JSON.stringify(response.data.data));
+      sessionStorage.setItem('role', 'employee'); // Store user role
+      sessionStorage.setItem('userType', userType); // Store userType
 
       message.success('Login successful! Redirecting...');
       navigate('/EmployeeDashboard', { state: { user: response.data.data } });
@@ -35,7 +35,7 @@ const EmployeeForm = () => {
   const handlePasswordReset = async (values) => {
     setResetLoading(true);
     try {
-      const userType = localStorage.getItem("userType") || "employee";
+      const userType = sessionStorage.getItem("userType") || "employee";
   
       // Make API call to request password reset
       const response = await forgetPassword({ email: values.email, userType });
@@ -44,8 +44,8 @@ const EmployeeForm = () => {
       const { resetToken, userId } = response.data;
   
       // Store reset token temporarily (optional)
-      localStorage.setItem("resetToken", resetToken);
-      localStorage.setItem("resetUserId", userId);
+      sessionStorage.setItem("resetToken", resetToken);
+      sessionStorage.setItem("resetUserId", userId);
   
       message.success("Password reset link sent to your email!");
       setIsForgotPasswordModalVisible(false);

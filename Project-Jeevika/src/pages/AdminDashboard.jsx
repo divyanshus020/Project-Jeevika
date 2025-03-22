@@ -38,7 +38,7 @@ const AdminDashboard = () => {
     const initializeDashboard = async () => {
       setLoading(true);
       try {
-        const adminData = JSON.parse(localStorage.getItem("adminData") || "null");
+        const adminData = JSON.parse(sessionStorage.getItem("adminData") || "null");
         if (!adminData) {
           navigate("/");
           return;
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
   };
 
   const confirmLogout = () => {
-    localStorage.clear(); // Clear all local storage data
+    sessionStorage.clear(); // Clear all local storage data
     sessionStorage.clear(); // Clear session storage as well (if needed)
     setEmployees([]);
     setCompanies([]);

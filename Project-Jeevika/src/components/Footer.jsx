@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from "react-router-dom";
 const Footer = () => {
     return (
         <div>
@@ -20,24 +20,42 @@ const Footer = () => {
                         <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
 
                             <div>
-                                <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+                                <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Quick</h2>
                                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
+
                                     <li className="mb-4">
-                                        <a href="" className="hover:underline ">Github</a>
+                                        <Link to="/" className="hover:underline">
+                                            Home
+                                        </Link>
+
+                                    </li>
+                                    <li className="mb-4">
+                                        <Link to="/Hire" className="hover:underline">
+                                            Company
+                                        </Link>
+
                                     </li>
                                     <li>
-                                        <a href="" className="hover:underline">Discord</a>
+                                        <Link to="/Employee" className="hover:underline">
+                                            Employee
+                                        </Link>
                                     </li>
                                 </ul>
                             </div>
                             <div>
                                 <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
                                 <ul className="text-gray-500 dark:text-gray-400 font-medium">
+
                                     <li className="mb-4">
-                                        <a href="#" className="hover:underline">Privacy Policy</a>
+                                        <Link to="/privacy-policy" className="hover:underline">
+                                            Privacy Policy
+                                        </Link>
+
                                     </li>
                                     <li>
-                                        <a href="#" className="hover:underline">Terms &amp; Conditions</a>
+                                        <Link to="/terms-conditions" className="hover:underline">
+                                            Terms & Conditions
+                                        </Link>
                                     </li>
                                 </ul>
                             </div>

@@ -22,7 +22,7 @@ const CompanyDashboard = () => {
   const [employeeProfileModal, setEmployeeProfileModal] = useState(false);
 
   useEffect(() => {
-    const storedCompany = localStorage.getItem("companyData");
+    const storedCompany = sessionStorage.getItem("companyData");
     if (storedCompany) {
       setCompany(JSON.parse(storedCompany));
     } else {
@@ -40,9 +40,11 @@ const CompanyDashboard = () => {
 
     const notificationData = {
       companyName: company.companyName,
+      companyNumber: company.mobileNumber,
       employeeName: employee.name,
+      employeeNumber: employee.mobile,
     };
-
+     console.log(employee)
     socket.emit("enquiry", notificationData);
     message.success(`Enquiry sent for ${employee.name}`);
   };
@@ -50,7 +52,7 @@ const CompanyDashboard = () => {
   const fetchEmployees = async () => {
     setEmployeeLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const response = await getAllEmployees(token);
       if (response?.data?.success && Array.isArray(response.data.data)) {
         setEmployees(response.data.data);
@@ -71,8 +73,8 @@ const CompanyDashboard = () => {
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("companyData");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("companyData");
+    sessionStorage.removeItem("token");
     message.success("Logged out successfully!");
     navigate("/");
   };

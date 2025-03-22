@@ -16,10 +16,10 @@ const AdminForm = () => {
       const response = await signInTeamMember({ ...values, userType });
 
       // Store authentication details securely
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('adminData', JSON.stringify(response.data.data));
-      localStorage.setItem('role', 'admin');
-      localStorage.setItem('userType', userType); // Store userType
+      sessionStorage.setItem('token', response.data.token);
+      sessionStorage.setItem('adminData', JSON.stringify(response.data.data));
+      sessionStorage.setItem('role', 'admin');
+      sessionStorage.setItem('userType', userType); // Store userType
 
       message.success('Login successful! Redirecting...');
       navigate('/AdminDashboard', { state: { admin: response.data.data } });
