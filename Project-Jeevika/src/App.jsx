@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 import NavBar from "./components/NavBar";
+import Loader from "./components/Loader";
 
 // Lazy load components for better performance
 const Home = lazy(() => import("../src/pages/Home"));
@@ -17,7 +18,9 @@ const ResetPassword = lazy(() => import("./components/ResetPassword"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 // Loading fallback component
-const LoadingSpinner = () => <div>Loading...</div>;
+const LoadingSpinner = () => <div>
+  <Loader/>
+</div>;
 
 // Layout component with protected routes logic
 const Layout = ({ children }) => {

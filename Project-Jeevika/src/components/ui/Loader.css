@@ -8,10 +8,22 @@
     --tool: #FBC56C;
     --duration: 3s;
     position: relative;
+    width: 200px; /* Increased width - adjust as needed */
+    height: auto; /* Ensure height scales proportionally */
+
     -webkit-animation: bounce05 var(--duration) linear infinite;
     animation: bounce05 var(--duration) linear infinite;
   }
   
+
+  .loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure container covers the viewport height */
+}
+
+
   .typewriter .slide {
     width: 92px;
     height: 20px;
