@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Layout, Modal, Button, message, Descriptions, Table } from "antd";
+import { Layout, Modal, Button, message, Descriptions, Table, Select, Input, Space, Dropdown, Menu } from "antd";
 import { getAllEmployees } from "../utils/api";
 import io from "socket.io-client";
+import { SearchOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
+const { Option } = Select;
 const socket = io("http://localhost:8080");
 
 const CompanyDashboard = () => {
@@ -16,10 +18,21 @@ const CompanyDashboard = () => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
   const [employees, setEmployees] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [employeeLoading, setEmployeeLoading] = useState(false);
   const [showEmployeeTable, setShowEmployeeTable] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [employeeProfileModal, setEmployeeProfileModal] = useState(false);
+  const [enquiryModalVisible, setEnquiryModalVisible] = useState(false);
+  const [employeeForEnquiry, setEmployeeForEnquiry] = useState(null);
+  
+  // New states for filtering and sorting
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [jobRoleFilter, setJobRoleFilter] = useState('');
+  const [salaryRange, setSalaryRange] = useState({ min: '', max: '' });
+  const [sortField, setSortField] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   useEffect(() => {
     const storedCompany = sessionStorage.getItem("companyData");
@@ -31,6 +44,68 @@ const CompanyDashboard = () => {
     }
     setLoading(false);
   }, [navigate]);
+
+  // Apply filters and sorting whenever employees or filter criteria change
+  useEffect(() => {
+    if (employees.length > 0) {
+      applyFiltersAndSort();
+    }
+  }, [employees, searchText, jobRoleFilter, salaryRange, sortField, sortOrder]);
+
+  const applyFiltersAndSort = () => {
+    let result = [...employees];
+    
+    // Apply search filter
+    if (searchText) {
+      result = result.filter(emp => 
+        emp.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    
+    // Apply job role filter
+    if (jobRoleFilter) {
+      result = result.filter(emp => emp.jobRole === jobRoleFilter);
+    }
+    
+    // Apply salary range filter
+    if (salaryRange.min) {
+      result = result.filter(emp => Number(emp.expectedSalary) >= Number(salaryRange.min));
+    }
+    if (salaryRange.max) {
+      result = result.filter(emp => Number(emp.expectedSalary) <= Number(salaryRange.max));
+    }
+    
+    // Apply sorting
+    result.sort((a, b) => {
+      let valueA = a[sortField];
+      let valueB = b[sortField];
+      
+      // Convert to numbers for salary comparison
+      if (sortField === 'expectedSalary') {
+        valueA = Number(valueA);
+        valueB = Number(valueB);
+      }
+      
+      if (valueA < valueB) {
+        return sortOrder === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return sortOrder === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    
+    setFilteredEmployees(result);
+  };
+
+  const resetFilters = () => {
+    setSearchText('');
+    setJobRoleFilter('');
+    setSalaryRange({ min: '', max: '' });
+    setSortField('name');
+    setSortOrder('asc');
+    setFilteredEmployees(employees);
+  };
 
   const sendEnquiryNotification = (employee) => {
     if (!company) {
@@ -44,9 +119,15 @@ const CompanyDashboard = () => {
       employeeName: employee.name,
       employeeNumber: employee.mobile,
     };
-     console.log(employee)
+    console.log(employee)
     socket.emit("enquiry", notificationData);
     message.success(`Enquiry sent for ${employee.name}`);
+    setEnquiryModalVisible(false);
+  };
+
+  const showEnquiryConfirmation = (employee) => {
+    setEmployeeForEnquiry(employee);
+    setEnquiryModalVisible(true);
   };
 
   const fetchEmployees = async () => {
@@ -56,6 +137,7 @@ const CompanyDashboard = () => {
       const response = await getAllEmployees(token);
       if (response?.data?.success && Array.isArray(response.data.data)) {
         setEmployees(response.data.data);
+        setFilteredEmployees(response.data.data);
       } else {
         message.error("Unexpected response format from server.");
       }
@@ -79,21 +161,72 @@ const CompanyDashboard = () => {
     navigate("/");
   };
 
+  // Get unique job roles for filter dropdown
+  const getUniqueJobRoles = () => {
+    const jobRoles = employees.map(emp => emp.jobRole);
+    return [...new Set(jobRoles)];
+  };
+
   const employeeColumns = [
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Job Role", dataIndex: "jobRole", key: "jobRole" },
-    { title: "Expected Salary", dataIndex: "expectedSalary", key: "expectedSalary" },
+    { 
+      title: "Name", 
+      dataIndex: "name", 
+      key: "name",
+      sorter: true,
+    },
+    { 
+      title: "Job Role", 
+      dataIndex: "jobRole", 
+      key: "jobRole",
+      sorter: true,
+    },
+    { 
+      title: "Expected Salary", 
+      dataIndex: "expectedSalary", 
+      key: "expectedSalary",
+      sorter: true,
+    },
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
         <>
           <Button type="link" onClick={() => handleViewProfile(record)}>View Profile</Button>
-          <Button type="link" onClick={() => sendEnquiryNotification(record)}>Enquiry</Button>
+          <Button
+            type="primary"
+            className="bg-green-500 hover:bg-green-600 border-green-500 hover:border-green-600 rounded-md"
+            onClick={() => showEnquiryConfirmation(record)}
+          >
+            Enquiry
+          </Button>
         </>
       ),
     },
   ];
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    if (sorter && sorter.field) {
+      setSortField(sorter.field);
+      setSortOrder(sorter.order === 'ascend' ? 'asc' : 'desc');
+    }
+  };
+
+  const sortMenu = (
+    <Menu>
+      <Menu.Item key="name-asc" onClick={() => { setSortField('name'); setSortOrder('asc'); }}>
+        Name (A-Z)
+      </Menu.Item>
+      <Menu.Item key="name-desc" onClick={() => { setSortField('name'); setSortOrder('desc'); }}>
+        Name (Z-A)
+      </Menu.Item>
+      <Menu.Item key="salary-asc" onClick={() => { setSortField('expectedSalary'); setSortOrder('asc'); }}>
+        Salary (Low to High)
+      </Menu.Item>
+      <Menu.Item key="salary-desc" onClick={() => { setSortField('expectedSalary'); setSortOrder('desc'); }}>
+        Salary (High to Low)
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <Layout className="w-full h-[80vh] bg-gray-200">
@@ -118,8 +251,37 @@ const CompanyDashboard = () => {
 
         {showEmployeeTable && (
           <div className="bg-white p-6 mt-4 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Employees</h2>
-            <Table dataSource={employees} columns={employeeColumns} rowKey="_id" pagination={{ pageSize: 5 }} />
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">Employees</h2>
+              <Space>
+                <Input 
+                  placeholder="Search by name" 
+                  prefix={<SearchOutlined />} 
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ width: 200 }}
+                />
+                <Button 
+                  icon={<FilterOutlined />} 
+                  onClick={() => setFilterModalVisible(true)}
+                >
+                  Filter
+                </Button>
+                <Dropdown overlay={sortMenu} placement="bottomRight">
+                  <Button icon={<SortAscendingOutlined />}>
+                    Sort
+                  </Button>
+                </Dropdown>
+                <Button onClick={resetFilters}>Reset</Button>
+              </Space>
+            </div>
+            <Table 
+              dataSource={filteredEmployees} 
+              columns={employeeColumns} 
+              rowKey="_id" 
+              pagination={{ pageSize: 5 }}
+              onChange={handleTableChange}
+            />
           </div>
         )}
       </Content>
@@ -161,6 +323,74 @@ const CompanyDashboard = () => {
           </Descriptions>
         ) : (
           <p>No employee selected.</p>
+        )}
+      </Modal>
+
+      {/* Filter Modal */}
+      <Modal
+        title="Filter Employees"
+        open={filterModalVisible}
+        onCancel={() => setFilterModalVisible(false)}
+        footer={[
+          <Button key="reset" onClick={resetFilters}>
+            Reset Filters
+          </Button>,
+          <Button key="apply" type="primary" onClick={() => setFilterModalVisible(false)}>
+            Apply
+          </Button>,
+        ]}
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block mb-1">Job Role</label>
+            <Select
+              style={{ width: '100%' }}
+              placeholder="Select job role"
+              value={jobRoleFilter}
+              onChange={value => setJobRoleFilter(value)}
+              allowClear
+            >
+              {getUniqueJobRoles().map(role => (
+                <Option key={role} value={role}>{role}</Option>
+              ))}
+            </Select>
+          </div>
+          
+          <div>
+            <label className="block mb-1">Salary Range</label>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Min"
+                type="number"
+                value={salaryRange.min}
+                onChange={e => setSalaryRange({ ...salaryRange, min: e.target.value })}
+                style={{ width: '50%' }}
+              />
+              <Input
+                placeholder="Max"
+                type="number"
+                value={salaryRange.max}
+                onChange={e => setSalaryRange({ ...salaryRange, max: e.target.value })}
+                style={{ width: '50%' }}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        title="Confirm Enquiry"
+        open={enquiryModalVisible}
+        onOk={() => employeeForEnquiry && sendEnquiryNotification(employeeForEnquiry)}
+        onCancel={() => setEnquiryModalVisible(false)}
+        okText="Yes, Send Enquiry"
+        cancelText="Cancel"
+      >
+        {employeeForEnquiry && (
+          <div>
+            <p>Are you sure you want to send an enquiry for <strong>{employeeForEnquiry.name}</strong>?</p>
+            <p className="mt-2">This will notify the employee about your interest.</p>
+          </div>
         )}
       </Modal>
 
