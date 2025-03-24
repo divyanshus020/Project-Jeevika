@@ -17,6 +17,7 @@ const ClassicLayout = ({ type }) => {
       text2:
         "Our company offers a supportive work environment, growth opportunities, and the chance to work on exciting projects.",
       buttonText: "Apply Now",
+      loginPath: "/login/company", // Navigate to company login
     },
     default: {
       image: Employee, // Default Image
@@ -27,6 +28,7 @@ const ClassicLayout = ({ type }) => {
       text2:
         "Tailwind CSS makes it easy to build responsive layouts with utility-first classes. This design is flexible and adapts to different screen sizes.",
       buttonText: "Apply Now",
+      loginPath: "/login/employee", // Default to employee login
     },
   };
 
@@ -47,7 +49,7 @@ const ClassicLayout = ({ type }) => {
 
         {/* Right Side (Text) */}
         <div className="flex-1 md:w-1/2 px-6 md:px-12 text-center md:text-left">
-          <h2 className="text-4xl font-extrabold text-gray-800 mb-6">
+          <h2 className="text-4xl font-extrabold text-gray-800 mb-6">   
             {layoutData.title}
           </h2>
           <p className="text-lg text-gray-600 mb-6">{layoutData.text1}</p>
@@ -56,7 +58,7 @@ const ClassicLayout = ({ type }) => {
           {/* Join Us Button */}
           <button
             className="mt-6 py-2 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300"
-            onClick={() => navigate("/Login")} // Redirect to Login page
+            onClick={() => navigate(layoutData.loginPath)} // Dynamic Navigation
           >
             {layoutData.buttonText}
           </button>

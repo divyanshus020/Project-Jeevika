@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation ,Navigate } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 import NavBar from "./components/NavBar";
 import Loader from "./components/Loader";
@@ -19,7 +19,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
 // Loading fallback component
 const LoadingSpinner = () => <div>
-  <Loader/>
+  <Loader />
 </div>;
 
 // Layout component with protected routes logic
@@ -45,7 +45,18 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/Employee" element={<Employee />} />
             <Route path="/Hire" element={<Hire />} />
-            <Route path="/Login" element={<Login />} />
+            {/* <Route path="/Login" element={<Login />} /> */}
+            
+            {/* Route for Login with dynamic role */}
+            <Route path="/login/:role" element={<Login />} />
+
+            {/* Default redirect to employee login */}
+            <Route path="/login" element={<Navigate to="/login/employee" replace />} />
+
+            {/* Redirect root to login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+
+
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-conditions" element={<TermsConditions />} />
             <Route path="/register">

@@ -15,7 +15,7 @@ const NavBar = () => {
   const navLinks = [
     { id: 1, name: "Home", path: "/" },
     { id: 2, name: "Employee", path: "/Employee" },
-    { id: 3, name: "Hire", path: "/Hire" },
+    { id: 3, name: "Company", path: "/Hire" },
   ];
 
   const registrationMenu = (
