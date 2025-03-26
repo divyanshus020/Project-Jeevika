@@ -147,10 +147,10 @@ const resetPassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
     try {
-        const { currentPassword, newPassword, userType } = req.body;
-        const userId = req.user.id; // From verifyToken middleware
-
-        if (!currentPassword || !newPassword || !userType) {
+        const { currentPassword, newPassword, userType,id } = req.body;
+        const userId =id; // From verifyToken middleware
+console.log(userId);
+        if (!currentPassword || !newPassword || !userType || !id) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -170,7 +170,7 @@ const changePassword = async (req, res) => {
         }
 
         const user = await Model.findById(userId);
-        
+        console.log(user);
         // Verify current password
         const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
         if (!isPasswordValid) {
