@@ -69,7 +69,7 @@ function App() {
             <Route path="/company">
               <Route path="employee-card" element={<EmployeeCard />} />
             </Route>
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
 
           </Routes>
         </Suspense>

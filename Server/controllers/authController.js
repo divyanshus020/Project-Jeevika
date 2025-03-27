@@ -40,7 +40,7 @@ const forgetPassword = async (req, res) => {
       user.resetPasswordExpires = Date.now() + 3600000;
       await user.save();
 
-      const resetUrl = `${process.env.CLIENT_URL}/${userType}/reset-password/?token=${resetToken}`;
+      const resetUrl = `${process.env.CLIENT_URL}/reset-password/?token=${resetToken}&usertype=${userType}`;
 
       const emailContent = {
           email: user.email,

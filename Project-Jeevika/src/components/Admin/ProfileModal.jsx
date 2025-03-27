@@ -8,10 +8,10 @@ const ProfileModal = ({ visible, setVisible, admin}) => {
 
   const handleResetPassword =async(values) => {
     try {
-      const role =sessionStorage.getItem("adminData");
-      const postData = {...values,userType:"team"}
-console.log(role);
-      const response = await changePassword(postData);
+      const adminData =JSON.parse(sessionStorage.getItem("adminData"));
+      const postData = {...values,userType:"team",id:adminData.id}
+
+     const response = await changePassword(postData);
       console.log(response)
     } catch (error) {
       console.log(error);

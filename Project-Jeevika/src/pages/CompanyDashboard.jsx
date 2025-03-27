@@ -33,6 +33,9 @@ const CompanyDashboard = () => {
   const [salaryRange, setSalaryRange] = useState({ min: '', max: '' });
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  
+  // New state for the visibility of the "Jeevika find you employee" button
+  const [showJeevikaButton, setShowJeevikaButton] = useState(false);
 
   useEffect(() => {
     const storedCompany = sessionStorage.getItem("companyData");
@@ -119,7 +122,7 @@ const CompanyDashboard = () => {
       employeeName: employee.name,
       employeeNumber: employee.mobile,
     };
-    console.log(employee)
+    console.log(employee);
     socket.emit("enquiry", notificationData);
     message.success(`Enquiry sent for ${employee.name}`);
     setEnquiryModalVisible(false);
@@ -138,6 +141,7 @@ const CompanyDashboard = () => {
       if (response?.data?.success && Array.isArray(response.data.data)) {
         setEmployees(response.data.data);
         setFilteredEmployees(response.data.data);
+        setShowJeevikaButton(true);  // Show the "Jeevika find you employee" button after employees are fetched
       } else {
         message.error("Unexpected response format from server.");
       }
@@ -275,6 +279,14 @@ const CompanyDashboard = () => {
                 <Button onClick={resetFilters}>Reset</Button>
               </Space>
             </div>
+
+            {/* Display Jeevika button here */}
+            {showJeevikaButton && (
+              <Button type="primary" className="mt-4">
+                Jeevika find you employee
+              </Button>
+            )}
+
             <Table 
               dataSource={filteredEmployees} 
               columns={employeeColumns} 
@@ -286,126 +298,126 @@ const CompanyDashboard = () => {
         )}
       </Content>
 
-      <Modal
-        title="Company Profile"
-        open={profileModalVisible}
-        onCancel={() => setProfileModalVisible(false)}
-        footer={<Button onClick={() => setProfileModalVisible(false)}>Close</Button>}
-      >
-        {company ? (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Company Name">{company.companyName}</Descriptions.Item>
-            <Descriptions.Item label="Email">{company.email}</Descriptions.Item>
-            <Descriptions.Item label="Phone">{company.mobileNumber}</Descriptions.Item>
-            <Descriptions.Item label="Address">{company.address}</Descriptions.Item>
-            <Descriptions.Item label="Industry">{company.industryDepartment}</Descriptions.Item>
-            <Descriptions.Item label="Category">{company.category}</Descriptions.Item>
-            <Descriptions.Item label="Requirement">{company.requirement}</Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <p>No company data found.</p>
-        )}
-      </Modal>
+        <Modal
+          title="Company Profile"
+          open={profileModalVisible}
+          onCancel={() => setProfileModalVisible(false)}
+          footer={<Button onClick={() => setProfileModalVisible(false)}>Close</Button>}
+        >
+          {company ? (
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label="Company Name">{company.companyName}</Descriptions.Item>
+              <Descriptions.Item label="Email">{company.email}</Descriptions.Item>
+              <Descriptions.Item label="Phone">{company.mobileNumber}</Descriptions.Item>
+              <Descriptions.Item label="Address">{company.address}</Descriptions.Item>
+              <Descriptions.Item label="Industry">{company.industryDepartment}</Descriptions.Item>
+              <Descriptions.Item label="Category">{company.category}</Descriptions.Item>
+              <Descriptions.Item label="Requirement">{company.requirement}</Descriptions.Item>
+            </Descriptions>
+          ) : (
+            <p>No company data found.</p>
+          )}
+        </Modal>
 
-      <Modal
-        title="Employee Profile"
-        open={employeeProfileModal}
-        onCancel={() => setEmployeeProfileModal(false)}
-        footer={<Button onClick={() => setEmployeeProfileModal(false)}>Close</Button>}
-      >
-        {selectedEmployee ? (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="Name">{selectedEmployee.name}</Descriptions.Item>
-            <Descriptions.Item label="Job Role">{selectedEmployee.jobRole}</Descriptions.Item>
-            <Descriptions.Item label="Experience">{selectedEmployee.workExperience}</Descriptions.Item>
-            <Descriptions.Item label="DOB">{selectedEmployee.dob}</Descriptions.Item>
-            <Descriptions.Item label="Expected Salary">{selectedEmployee.expectedSalary}</Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <p>No employee selected.</p>
-        )}
-      </Modal>
+        <Modal
+          title="Employee Profile"
+          open={employeeProfileModal}
+          onCancel={() => setEmployeeProfileModal(false)}
+          footer={<Button onClick={() => setEmployeeProfileModal(false)}>Close</Button>}
+        >
+          {selectedEmployee ? (
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label="Name">{selectedEmployee.name}</Descriptions.Item>
+              <Descriptions.Item label="Job Role">{selectedEmployee.jobRole}</Descriptions.Item>
+              <Descriptions.Item label="Experience">{selectedEmployee.workExperience}</Descriptions.Item>
+              <Descriptions.Item label="DOB">{selectedEmployee.dob}</Descriptions.Item>
+              <Descriptions.Item label="Expected Salary">{selectedEmployee.expectedSalary}</Descriptions.Item>
+            </Descriptions>
+          ) : (
+            <p>No employee selected.</p>
+          )}
+        </Modal>
 
-      {/* Filter Modal */}
-      <Modal
-        title="Filter Employees"
-        open={filterModalVisible}
-        onCancel={() => setFilterModalVisible(false)}
-        footer={[
-          <Button key="reset" onClick={resetFilters}>
-            Reset Filters
-          </Button>,
-          <Button key="apply" type="primary" onClick={() => setFilterModalVisible(false)}>
-            Apply
-          </Button>,
-        ]}
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-1">Job Role</label>
-            <Select
-              style={{ width: '100%' }}
-              placeholder="Select job role"
-              value={jobRoleFilter}
-              onChange={value => setJobRoleFilter(value)}
-              allowClear
-            >
-              {getUniqueJobRoles().map(role => (
-                <Option key={role} value={role}>{role}</Option>
-              ))}
-            </Select>
-          </div>
-          
-          <div>
-            <label className="block mb-1">Salary Range</label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Min"
-                type="number"
-                value={salaryRange.min}
-                onChange={e => setSalaryRange({ ...salaryRange, min: e.target.value })}
-                style={{ width: '50%' }}
-              />
-              <Input
-                placeholder="Max"
-                type="number"
-                value={salaryRange.max}
-                onChange={e => setSalaryRange({ ...salaryRange, max: e.target.value })}
-                style={{ width: '50%' }}
-              />
+        {/* Filter Modal */}
+        <Modal
+          title="Filter Employees"
+          open={filterModalVisible}
+          onCancel={() => setFilterModalVisible(false)}
+          footer={[
+            <Button key="reset" onClick={resetFilters}>
+              Reset Filters
+            </Button>,
+            <Button key="apply" type="primary" onClick={() => setFilterModalVisible(false)}>
+              Apply
+            </Button>,
+          ]}
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block mb-1">Job Role</label>
+              <Select
+                style={{ width: '100%' }}
+                placeholder="Select job role"
+                value={jobRoleFilter}
+                onChange={value => setJobRoleFilter(value)}
+                allowClear
+              >
+                {getUniqueJobRoles().map(role => (
+                  <Option key={role} value={role}>{role}</Option>
+                ))}
+              </Select>
+            </div>
+            
+            <div>
+              <label className="block mb-1">Salary Range</label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Min"
+                  type="number"
+                  value={salaryRange.min}
+                  onChange={e => setSalaryRange({ ...salaryRange, min: e.target.value })}
+                  style={{ width: '50%' }}
+                />
+                <Input
+                  placeholder="Max"
+                  type="number"
+                  value={salaryRange.max}
+                  onChange={e => setSalaryRange({ ...salaryRange, max: e.target.value })}
+                  style={{ width: '50%' }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
 
-      <Modal
-        title="Confirm Enquiry"
-        open={enquiryModalVisible}
-        onOk={() => employeeForEnquiry && sendEnquiryNotification(employeeForEnquiry)}
-        onCancel={() => setEnquiryModalVisible(false)}
-        okText="Yes, Send Enquiry"
-        cancelText="Cancel"
-      >
-        {employeeForEnquiry && (
-          <div>
-            <p>Are you sure you want to send an enquiry for <strong>{employeeForEnquiry.name}</strong>?</p>
-            <p className="mt-2">This will notify the employee about your interest.</p>
-          </div>
-        )}
-      </Modal>
+        <Modal
+          title="Confirm Enquiry"
+          open={enquiryModalVisible}
+          onOk={() => employeeForEnquiry && sendEnquiryNotification(employeeForEnquiry)}
+          onCancel={() => setEnquiryModalVisible(false)}
+          okText="Yes, Send Enquiry"
+          cancelText="Cancel"
+        >
+          {employeeForEnquiry && (
+            <div>
+              <p>Are you sure you want to send an enquiry for <strong>{employeeForEnquiry.name}</strong>?</p>
+              <p className="mt-2">This will notify the employee about your interest.</p>
+            </div>
+          )}
+        </Modal>
 
-      <Modal
-        title="Confirm Logout"
-        open={logoutModalVisible}
-        onOk={confirmLogout}
-        onCancel={() => setLogoutModalVisible(false)}
-        okText="Yes, Logout"
-        cancelText="No"
-      >
-        <p>Are you sure you want to log out?</p>
-      </Modal>
-    </Layout>
-  );
-};
+        <Modal
+          title="Confirm Logout"
+          open={logoutModalVisible}
+          onOk={confirmLogout}
+          onCancel={() => setLogoutModalVisible(false)}
+          okText="Yes, Logout"
+          cancelText="No"
+        >
+          <p>Are you sure you want to log out?</p>
+        </Modal>
+      </Layout>
+    );
+  };
 
-export default CompanyDashboard;
+  export default CompanyDashboard;

@@ -35,17 +35,17 @@ const EmployeeForm = () => {
   const handlePasswordReset = async (values) => {
     setResetLoading(true);
     try {
-      const userType = sessionStorage.getItem("userType") || "employee";
+      const userType = "employee";
   
       // Make API call to request password reset
       const response = await forgetPassword({ email: values.email, userType });
   
       // Assuming the backend sends a reset token and user ID in response
-      const { resetToken, userId } = response.data;
+      //const { resetToken, userId } = response.data;
   
       // Store reset token temporarily (optional)
-      sessionStorage.setItem("resetToken", resetToken);
-      sessionStorage.setItem("resetUserId", userId);
+      //sessionStorage.setItem("resetToken", resetToken);
+      //sessionStorage.setItem("resetUserId", userId);
   
       message.success("Password reset link sent to your email!");
       setIsForgotPasswordModalVisible(false);
