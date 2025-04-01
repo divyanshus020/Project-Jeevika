@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, message, Spin, Form, Modal, Button, notification } from "antd";
 import { getAllEmployees, getAllCompanies } from "../utils/api";
-// import io from "socket.io-client";
 import AdminNavbar from "../components/admin/AdminNavbar";
 import AdminHome from "../components/admin/AdminHome";
 import EmployeeTable from "../components/admin/EmployeeTable";
@@ -12,7 +11,7 @@ import ProfileModal from "../components/admin/ProfileModal";
 import DetailModal from "../components/admin/DetailModal";
 import DashboardStats from "../components/admin/DashboardStats";
 import ConnectTable from "../components/admin/ConnectTable";
-
+import RequestModel from "../components/admin/RequestModel";
 const { Content } = Layout;
 // const socket = io("http://localhost:8080");
 
@@ -32,6 +31,7 @@ const AdminDashboard = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [connectionCount, setConnectionCount] = useState(0);
+  const [requestModelVisible, setRequestModelVisible] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -114,6 +114,25 @@ const AdminDashboard = () => {
     setDetailModalVisible(true);
   };
 
+  const handleOpenRequestModel = () => {
+    setRequestModelVisible(true);
+  };
+
+  const handleRequestSubmit = async (values) => {
+    try {
+      // Here you would call your API to submit the request
+      // For example: await submitRequest(values);
+      message.success("Request submitted successfully");
+      setRequestModelVisible(false);
+    } catch (error) {
+      message.error("Failed to submit request");
+    }
+  };
+
+  const handleRequestCancel = () => {
+    setRequestModelVisible(false);
+  };
+
   return (
     <Layout className="w-full h-full bg-gray-100">
       <AdminNavbar
@@ -125,6 +144,7 @@ const AdminDashboard = () => {
         setCreateTeamModalVisible={setCreateTeamModalVisible}
         setProfileModalVisible={setProfileModalVisible}
         handleLogout={handleLogout}
+        handleOpenRequestModel={handleOpenRequestModel}
       />
 
       <Content className="p-6">
@@ -134,7 +154,12 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
-            <DashboardStats employeeCount={employees.length} companyCount={companies.length} connectionCount={connectionCount} />
+            <DashboardStats 
+              employeeCount={employees.length} 
+              companyCount={companies.length} 
+              connectionCount={connectionCount} 
+              onRequestClick={handleOpenRequestModel}
+            />
 
             <div className="mt-6">
               {activeTab === "home" && <AdminHome admin={admin} />}
@@ -156,6 +181,17 @@ const AdminDashboard = () => {
                 />
               )}
 
+               {activeTab === "request" && <RequestModel />
+                // <div className="flex justify-end mb-4">
+                //   <Button 
+                //     type="primary" 
+                //     onClick={handleOpenRequestModel}
+                //     className="bg-blue-500 hover:bg-blue-600"
+                //   >
+                //     Create New Request
+                //   </Button>
+                // </div>
+              }
             </div>
           </>
         )}

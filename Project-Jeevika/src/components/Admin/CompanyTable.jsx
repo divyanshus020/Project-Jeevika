@@ -243,7 +243,7 @@ const CompanyTable = ({ companies, dataLoading }) => {
         columns={columns}
         rowKey="_id"
         loading={dataLoading}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
         onChange={(pagination, filters, sorter) => {
           if (sorter.field) {
             setSortField(sorter.field);
@@ -261,7 +261,7 @@ const CompanyTable = ({ companies, dataLoading }) => {
           <Button key="close" type="primary" onClick={handleModalClose}>
             Close
           </Button>,
-        ]}
+        ]} 
         width={600}
       >
         {selectedCompany && (

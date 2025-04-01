@@ -258,7 +258,7 @@ const EmployeeTable = ({ employees, dataLoading }) => {
         columns={columns}
         rowKey="_id"
         loading={dataLoading}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
       />
 
       {/* Employee Details Modal */}

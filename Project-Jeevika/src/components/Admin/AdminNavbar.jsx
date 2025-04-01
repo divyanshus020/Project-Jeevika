@@ -8,6 +8,7 @@ import {
   DatabaseOutlined,
   LinkOutlined,
   MenuOutlined,
+  FileTextOutlined, // Added for Request icon
 } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -73,6 +74,19 @@ const AdminNavbar = ({
         block={mobileMenuOpen}
       >
         Connect
+      </Button>
+
+      {/* New Request Button */}
+      <Button
+        type={activeTab === "request" ? "primary" : "default"}
+        icon={<FileTextOutlined />}
+        onClick={() => {
+          setActiveTab("request");
+          setMobileMenuOpen(false);
+        }}
+        block={mobileMenuOpen}
+      >
+        Request
       </Button>
 
       <Button

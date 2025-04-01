@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Layout, Modal, Button, message, Descriptions, Table, Select, Input, Space, Dropdown, Menu } from "antd";
+import { Layout, Modal, Button, message, Table, Select, Input, Space, Dropdown, Menu } from "antd";
 import { getAllEmployees } from "../utils/api";
 import io from "socket.io-client";
 import { SearchOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
+
+// Import the new modal components
+import CompanyProfileModal from '../components/Company/CompanyProfileModel';
+import EmployeeProfileModal from '../components/Company/EmployeeCardModel';
 
 const { Content } = Layout;
 const { Option } = Select;
@@ -16,26 +20,37 @@ const CompanyDashboard = () => {
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-  const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [companyProfileModalVisible, setCompanyProfileModalVisible] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [employeeLoading, setEmployeeLoading] = useState(false);
   const [showEmployeeTable, setShowEmployeeTable] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [employeeProfileModal, setEmployeeProfileModal] = useState(false);
+  const [employeeProfileModalVisible, setEmployeeProfileModalVisible] = useState(false);
   const [enquiryModalVisible, setEnquiryModalVisible] = useState(false);
   const [employeeForEnquiry, setEmployeeForEnquiry] = useState(null);
-  
-  // New states for filtering and sorting
+
+  // Filtering and sorting states
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [jobRoleFilter, setJobRoleFilter] = useState('');
   const [salaryRange, setSalaryRange] = useState({ min: '', max: '' });
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
-  
-  // New state for the visibility of the "Jeevika find you employee" button
+
   const [showJeevikaButton, setShowJeevikaButton] = useState(false);
+  const [jeevikaModalVisible, setJeevikaModalVisible] = useState(false);
+  const [jeevikaRequestMessage, setJeevikaRequestMessage] = useState('');
+
+  // Add a function to refresh company data from sessionStorage
+  const refreshCompanyData = () => {
+    const storedCompany = sessionStorage.getItem("companyData");
+    if (storedCompany) {
+      const updatedCompany = JSON.parse(storedCompany);
+      console.log("Refreshing company data:", updatedCompany);
+      setCompany(updatedCompany);
+    }
+  };
 
   useEffect(() => {
     const storedCompany = sessionStorage.getItem("companyData");
@@ -57,19 +72,19 @@ const CompanyDashboard = () => {
 
   const applyFiltersAndSort = () => {
     let result = [...employees];
-    
+
     // Apply search filter
     if (searchText) {
-      result = result.filter(emp => 
+      result = result.filter(emp =>
         emp.name.toLowerCase().includes(searchText.toLowerCase())
       );
     }
-    
+
     // Apply job role filter
     if (jobRoleFilter) {
       result = result.filter(emp => emp.jobRole === jobRoleFilter);
     }
-    
+
     // Apply salary range filter
     if (salaryRange.min) {
       result = result.filter(emp => Number(emp.expectedSalary) >= Number(salaryRange.min));
@@ -77,18 +92,18 @@ const CompanyDashboard = () => {
     if (salaryRange.max) {
       result = result.filter(emp => Number(emp.expectedSalary) <= Number(salaryRange.max));
     }
-    
+
     // Apply sorting
     result.sort((a, b) => {
       let valueA = a[sortField];
       let valueB = b[sortField];
-      
+
       // Convert to numbers for salary comparison
       if (sortField === 'expectedSalary') {
         valueA = Number(valueA);
         valueB = Number(valueB);
       }
-      
+
       if (valueA < valueB) {
         return sortOrder === 'asc' ? -1 : 1;
       }
@@ -97,7 +112,7 @@ const CompanyDashboard = () => {
       }
       return 0;
     });
-    
+
     setFilteredEmployees(result);
   };
 
@@ -141,7 +156,7 @@ const CompanyDashboard = () => {
       if (response?.data?.success && Array.isArray(response.data.data)) {
         setEmployees(response.data.data);
         setFilteredEmployees(response.data.data);
-        setShowJeevikaButton(true);  // Show the "Jeevika find you employee" button after employees are fetched
+        setShowJeevikaButton(true);
       } else {
         message.error("Unexpected response format from server.");
       }
@@ -155,7 +170,7 @@ const CompanyDashboard = () => {
 
   const handleViewProfile = (employee) => {
     setSelectedEmployee(employee);
-    setEmployeeProfileModal(true);
+    setEmployeeProfileModalVisible(true);
   };
 
   const confirmLogout = () => {
@@ -172,21 +187,21 @@ const CompanyDashboard = () => {
   };
 
   const employeeColumns = [
-    { 
-      title: "Name", 
-      dataIndex: "name", 
+    {
+      title: "Name",
+      dataIndex: "name",
       key: "name",
       sorter: true,
     },
-    { 
-      title: "Job Role", 
-      dataIndex: "jobRole", 
+    {
+      title: "Job Role",
+      dataIndex: "jobRole",
       key: "jobRole",
       sorter: true,
     },
-    { 
-      title: "Expected Salary", 
-      dataIndex: "expectedSalary", 
+    {
+      title: "Expected Salary",
+      dataIndex: "expectedSalary",
       key: "expectedSalary",
       sorter: true,
     },
@@ -237,7 +252,7 @@ const CompanyDashboard = () => {
       <div className="w-full bg-white p-4 flex justify-between items-center shadow-md">
         <h2 className="text-xl font-bold text-gray-800">Company Dashboard</h2>
         <div className="flex gap-4">
-          <Button type="primary" onClick={() => setProfileModalVisible(true)}>Profile</Button>
+          <Button type="primary" onClick={() => setCompanyProfileModalVisible(true)}>Profile</Button>
           <Button type="default" onClick={fetchEmployees} loading={employeeLoading}>Employee Card</Button>
           <Button danger onClick={() => setLogoutModalVisible(true)}>Logout</Button>
         </div>
@@ -258,15 +273,15 @@ const CompanyDashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">Employees</h2>
               <Space>
-                <Input 
-                  placeholder="Search by name" 
-                  prefix={<SearchOutlined />} 
+                <Input
+                  placeholder="Search by name"
+                  prefix={<SearchOutlined />}
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                   style={{ width: 200 }}
                 />
-                <Button 
-                  icon={<FilterOutlined />} 
+                <Button
+                  icon={<FilterOutlined />}
                   onClick={() => setFilterModalVisible(true)}
                 >
                   Filter
@@ -280,17 +295,67 @@ const CompanyDashboard = () => {
               </Space>
             </div>
 
-            {/* Display Jeevika button here */}
             {showJeevikaButton && (
-              <Button type="primary" className="mt-4">
+              <Button
+                type="primary"
+                className="mt-4"
+                onClick={() => setJeevikaModalVisible(true)}
+              >
                 Jeevika find you employee
               </Button>
             )}
 
-            <Table 
-              dataSource={filteredEmployees} 
-              columns={employeeColumns} 
-              rowKey="_id" 
+            {/* Jeevika Find Employee Modal */}
+            <Modal
+              title="Jeevika Employee Finder"
+              open={jeevikaModalVisible}
+              onOk={() => {
+                // Send the request via websocket
+                if (!company) {
+                  message.error("Company data not found. Please log in again.");
+                  return;
+                }
+
+                const requestData = {
+                  companyName: company.companyName,
+                  companyNumber: company.mobileNumber,
+                  requestMessage: jeevikaRequestMessage,
+                  timestamp: new Date().toISOString()
+                };
+
+                // Emit the event through socket
+                socket.emit("jeevikaEmployeeRequest", requestData);
+
+                message.success("Your request has been submitted. Jeevika will find suitable employees for you!");
+                setJeevikaRequestMessage(''); // Clear the message
+                setJeevikaModalVisible(false);
+              }}
+              onCancel={() => setJeevikaModalVisible(false)}
+              okText="Submit Request"
+              cancelText="Cancel"
+            >
+              <p>Let Jeevika's AI-powered system find the perfect employees for your business needs!</p>
+              <div className="mt-4">
+                <p className="font-semibold mb-2">What kind of employees are you looking for?</p>
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Describe the skills, experience, and qualities you're looking for in potential employees..."
+                  value={jeevikaRequestMessage}
+                  onChange={(e) => setJeevikaRequestMessage(e.target.value)}
+                />
+              </div>
+              <div className="mt-4">
+                <p className="text-sm text-gray-500">
+                  Our system will analyze your requirements and match you with the most suitable candidates from our database.
+                  You'll receive notifications when we find potential matches.
+                </p>
+              </div>
+            </Modal>
+
+            <Table
+              dataSource={filteredEmployees}
+              columns={employeeColumns}
+              rowKey="_id"
               pagination={{ pageSize: 5 }}
               onChange={handleTableChange}
             />
@@ -298,126 +363,112 @@ const CompanyDashboard = () => {
         )}
       </Content>
 
-        <Modal
-          title="Company Profile"
-          open={profileModalVisible}
-          onCancel={() => setProfileModalVisible(false)}
-          footer={<Button onClick={() => setProfileModalVisible(false)}>Close</Button>}
-        >
-          {company ? (
-            <Descriptions bordered column={1}>
-              <Descriptions.Item label="Company Name">{company.companyName}</Descriptions.Item>
-              <Descriptions.Item label="Email">{company.email}</Descriptions.Item>
-              <Descriptions.Item label="Phone">{company.mobileNumber}</Descriptions.Item>
-              <Descriptions.Item label="Address">{company.address}</Descriptions.Item>
-              <Descriptions.Item label="Industry">{company.industryDepartment}</Descriptions.Item>
-              <Descriptions.Item label="Category">{company.category}</Descriptions.Item>
-              <Descriptions.Item label="Requirement">{company.requirement}</Descriptions.Item>
-            </Descriptions>
-          ) : (
-            <p>No company data found.</p>
-          )}
-        </Modal>
+      {/* Company Profile Modal - UPDATED */}
+      <CompanyProfileModal
+        company={company}
+        visible={companyProfileModalVisible}
+        onClose={(updatedData) => {
+          console.log("Profile modal closed with data:", updatedData);
+          if (updatedData) {
+            // Update the company state with the new data
+            setCompany(updatedData);
+          } else {
+            // If no data was passed, refresh from sessionStorage as fallback
+            refreshCompanyData();
+          }
+          setCompanyProfileModalVisible(false);
+        }}
+      />
 
-        <Modal
-          title="Employee Profile"
-          open={employeeProfileModal}
-          onCancel={() => setEmployeeProfileModal(false)}
-          footer={<Button onClick={() => setEmployeeProfileModal(false)}>Close</Button>}
-        >
-          {selectedEmployee ? (
-            <Descriptions bordered column={1}>
-              <Descriptions.Item label="Name">{selectedEmployee.name}</Descriptions.Item>
-              <Descriptions.Item label="Job Role">{selectedEmployee.jobRole}</Descriptions.Item>
-              <Descriptions.Item label="Experience">{selectedEmployee.workExperience}</Descriptions.Item>
-              <Descriptions.Item label="DOB">{selectedEmployee.dob}</Descriptions.Item>
-              <Descriptions.Item label="Expected Salary">{selectedEmployee.expectedSalary}</Descriptions.Item>
-            </Descriptions>
-          ) : (
-            <p>No employee selected.</p>
-          )}
-        </Modal>
+      {/* Employee Profile Modal */}
+      <EmployeeProfileModal
+        employee={selectedEmployee}
+        visible={employeeProfileModalVisible}
+        onClose={() => setEmployeeProfileModalVisible(false)}
+      />
 
-        {/* Filter Modal */}
-        <Modal
-          title="Filter Employees"
-          open={filterModalVisible}
-          onCancel={() => setFilterModalVisible(false)}
-          footer={[
-            <Button key="reset" onClick={resetFilters}>
-              Reset Filters
-            </Button>,
-            <Button key="apply" type="primary" onClick={() => setFilterModalVisible(false)}>
-              Apply
-            </Button>,
-          ]}
-        >
-          <div className="space-y-4">
-            <div>
-              <label className="block mb-1">Job Role</label>
-              <Select
-                style={{ width: '100%' }}
-                placeholder="Select job role"
-                value={jobRoleFilter}
-                onChange={value => setJobRoleFilter(value)}
-                allowClear
-              >
-                {getUniqueJobRoles().map(role => (
-                  <Option key={role} value={role}>{role}</Option>
-                ))}
-              </Select>
-            </div>
-            
-            <div>
-              <label className="block mb-1">Salary Range</label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Min"
-                  type="number"
-                  value={salaryRange.min}
-                  onChange={e => setSalaryRange({ ...salaryRange, min: e.target.value })}
-                  style={{ width: '50%' }}
-                />
-                <Input
-                  placeholder="Max"
-                  type="number"
-                  value={salaryRange.max}
-                  onChange={e => setSalaryRange({ ...salaryRange, max: e.target.value })}
-                  style={{ width: '50%' }}
-                />
-              </div>
+      {/* Confirm Enquiry Modal */}
+      <Modal
+        title="Confirm Enquiry"
+        open={enquiryModalVisible}
+        onOk={() => employeeForEnquiry && sendEnquiryNotification(employeeForEnquiry)}
+        onCancel={() => setEnquiryModalVisible(false)}
+        okText="Yes, Send Enquiry"
+        cancelText="Cancel"
+      >
+        {employeeForEnquiry && (
+          <div>
+            <p>Are you sure you want to send an enquiry for <strong>{employeeForEnquiry.name}</strong>?</p>
+            <p className="mt-2">This will notify the employee about your interest.</p>
+          </div>
+        )}
+      </Modal>
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        title="Confirm Logout"
+        open={logoutModalVisible}
+        onOk={confirmLogout}
+        onCancel={() => setLogoutModalVisible(false)}
+        okText="Yes, Logout"
+        cancelText="No"
+      >
+        <p>Are you sure you want to log out?</p>
+      </Modal>
+
+      {/* Filter Modal */}
+      <Modal
+        title="Filter Employees"
+        open={filterModalVisible}
+        onCancel={() => setFilterModalVisible(false)}
+        footer={[
+          <Button key="reset" onClick={resetFilters}>
+            Reset Filters
+          </Button>,
+          <Button key="apply" type="primary" onClick={() => setFilterModalVisible(false)}>
+            Apply
+          </Button>,
+        ]}
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block mb-1">Job Role</label>
+            <Select
+              style={{ width: '100%' }}
+              placeholder="Select job role"
+              value={jobRoleFilter}
+              onChange={value => setJobRoleFilter(value)}
+              allowClear
+            >
+              {getUniqueJobRoles().map(role => (
+                <Option key={role} value={role}>{role}</Option>
+              ))}
+            </Select>
+          </div>
+
+          <div>
+            <label className="block mb-1">Salary Range</label>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Min"
+                type="number"
+                value={salaryRange.min}
+                onChange={e => setSalaryRange({ ...salaryRange, min: e.target.value })}
+                style={{ width: '50%' }}
+              />
+              <Input
+                placeholder="Max"
+                type="number"
+                value={salaryRange.max}
+                onChange={e => setSalaryRange({ ...salaryRange, max: e.target.value })}
+                style={{ width: '50%' }}
+              />
             </div>
           </div>
-        </Modal>
+        </div>
+      </Modal>
+    </Layout>
+  );
+};
 
-        <Modal
-          title="Confirm Enquiry"
-          open={enquiryModalVisible}
-          onOk={() => employeeForEnquiry && sendEnquiryNotification(employeeForEnquiry)}
-          onCancel={() => setEnquiryModalVisible(false)}
-          okText="Yes, Send Enquiry"
-          cancelText="Cancel"
-        >
-          {employeeForEnquiry && (
-            <div>
-              <p>Are you sure you want to send an enquiry for <strong>{employeeForEnquiry.name}</strong>?</p>
-              <p className="mt-2">This will notify the employee about your interest.</p>
-            </div>
-          )}
-        </Modal>
-
-        <Modal
-          title="Confirm Logout"
-          open={logoutModalVisible}
-          onOk={confirmLogout}
-          onCancel={() => setLogoutModalVisible(false)}
-          okText="Yes, Logout"
-          cancelText="No"
-        >
-          <p>Are you sure you want to log out?</p>
-        </Modal>
-      </Layout>
-    );
-  };
-
-  export default CompanyDashboard;
+export default CompanyDashboard;
