@@ -1,5 +1,5 @@
 tailwind.config = {
-  // darkMode: "class",
+  // darkMode: "className",
   theme: {
     extend: {
       colors: {
@@ -66,7 +66,7 @@ const {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{ts,tsx}"],
-  darkMode: "class",
+  darkMode: "className",
   theme: {
     // rest of the code
   },

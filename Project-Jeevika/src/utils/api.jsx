@@ -12,7 +12,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
-// Authentication APIs
+// ✅ Authentication APIs
 export const resetPassword = (token, data) => 
   API.post(`/auth/reset-password/${token}`, data);
 
@@ -22,7 +22,7 @@ export const forgetPassword = (data) =>
 export const changePassword = (data) => 
   API.post("/auth/change-password", data);
 
-// Company APIs
+// ✅ Company APIs
 export const registerCompany = (userData) =>
   API.post("/register/company", userData);
 
@@ -38,7 +38,7 @@ export const getCompanyById = (id) =>
 export const getAllCompanies = () =>
   API.get("/companies");
 
-// Employee APIs
+// ✅ Employee APIs
 export const registerEmployee = (userData) =>
   API.post("/register/employee", userData);
 
@@ -54,7 +54,7 @@ export const getEmployeeById = (id) =>
 export const getAllEmployees = () =>
   API.get("/employees");
 
-// Team Member APIs
+// ✅ Team Member APIs
 export const registerTeamMember = (userData) =>
   API.post("/register/teammember", userData);
 
@@ -63,3 +63,16 @@ export const signInTeamMember = (userData) =>
 
 export const updateTeamMember = (id, userData) =>
   API.patch(`/teammember/${id}`, userData);
+
+// ✅ Message APIs
+export const sendMessage = (messageData) => 
+  API.post("/messages", messageData);
+
+export const getMessages = () => 
+  API.get("/messages");
+
+export const getMessageById = (id) => 
+  API.get(`/messages/${id}`);
+
+export const deleteMessage = (id) => 
+  API.delete(`/messages/${id}`);

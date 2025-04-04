@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, NavLink } from "react-router-dom";
-import { Dropdown, Menu, Button } from "antd";
+import { Dropdown, Button } from "antd";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,16 +18,10 @@ const NavBar = () => {
     { id: 3, name: "Company", path: "/Hire" },
   ];
 
-  const registrationMenu = (
-    <Menu>
-      <Menu.Item key="employee">
-        <Link to="/register/employee">Employee</Link>
-      </Menu.Item>
-      <Menu.Item key="company">
-        <Link to="/register/company">Company</Link>
-      </Menu.Item>
-    </Menu>
-  );
+  const registrationMenuItems = [
+    { key: "employee", label: <Link to="/register/employee">Employee</Link> },
+    { key: "company", label: <Link to="/register/company">Company</Link> },
+  ];
 
   return (
     <nav className="bg-white shadow-md">
@@ -53,11 +47,10 @@ const NavBar = () => {
                 </li>
               ))}
               <li>
-                <Dropdown overlay={registrationMenu} trigger={['click']}>
+                <Dropdown menu={{ items: registrationMenuItems }} trigger={["click"]}>
                   <Button className="px-3 py-2 rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-700">Register</Button>
                 </Dropdown>
               </li>
-
               {!isAuthenticated && (
                 <li>
                   <Link to="/Login" className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100">
@@ -76,48 +69,17 @@ const NavBar = () => {
               aria-expanded={isMenuOpen}
             >
               <span className="sr-only">Open main menu</span>
-              {/* ... (rest of the mobile menu button code) ... */}
-              <svg
-                className="block h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-
-              <svg
-                className="hidden h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu (replaces previous mobile menu code) */}
       {isMenuOpen && (
         <div className="sm:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            {/* ... (mobile menu links - same as desktop menu links) ... */}
             {navLinks.map((link) => (
               <Link
                 key={link.id}
@@ -131,14 +93,11 @@ const NavBar = () => {
                 {link.name}
               </Link>
             ))}
-            <Dropdown overlay={registrationMenu} trigger={['click']}>
+            <Dropdown menu={{ items: registrationMenuItems }} trigger={["click"]}>
               <Button className="block px-3 py-2 rounded-md text-base font-medium bg-blue-500 text-white hover:bg-blue-700">Register</Button>
             </Dropdown>
             {!isAuthenticated && (
-              <Link
-                to="/Login"
-                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100"
-              >
+              <Link to="/Login" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-100">
                 Login
               </Link>
             )}

@@ -2,12 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
+require("dotenv").config();
+
 const authRoutes = require("./routes/authRoute");
 const employeeRoutes = require("./routes/employeeRoute");
 const companyRoutes = require("./routes/companyRoute");
 const teamRoutes = require("./routes/teamRoutes");
+const messageRoutes = require("./routes/messageRoutes"); // ✅ Import Message Routes
 
-require('dotenv').config();
 const app = express();
 
 // ✅ Middleware
@@ -25,7 +27,7 @@ const allowedOrigins = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 app.use(
   cors({
     origin: allowedOrigins.split(","), // Supports multiple frontend URLs
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
 );
@@ -35,6 +37,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api", employeeRoutes);
 app.use("/api", companyRoutes);
 app.use("/api", teamRoutes);
+app.use("/api", messageRoutes); // ✅ Add Message Routes
 
 // ✅ Default API Check Route
 app.get("/", (req, res) => {

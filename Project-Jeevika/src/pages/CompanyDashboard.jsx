@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Layout, Modal, Button, message, Table, Select, Input, Space, Dropdown, Menu } from "antd";
-import { getAllEmployees } from "../utils/api";
+import { getAllEmployees, sendMessage } from "../utils/api";
 import io from "socket.io-client";
 import { SearchOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
 
@@ -41,6 +41,7 @@ const CompanyDashboard = () => {
   const [showJeevikaButton, setShowJeevikaButton] = useState(false);
   const [jeevikaModalVisible, setJeevikaModalVisible] = useState(false);
   const [jeevikaRequestMessage, setJeevikaRequestMessage] = useState('');
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   // Add a function to refresh company data from sessionStorage
   const refreshCompanyData = () => {
@@ -180,6 +181,46 @@ const CompanyDashboard = () => {
     navigate("/");
   };
 
+  // Function to handle Jeevika employee request submission
+  const handleJeevikaRequest = async () => {
+    if (!company) {
+      message.error("Company data not found. Please log in again.");
+      return;
+    }
+
+    if (!jeevikaRequestMessage.trim()) {
+      message.error("Please describe what kind of employees you're looking for.");
+      return;
+    }
+
+    setSubmitLoading(true);
+    try {
+      const token = sessionStorage.getItem("token");
+      const requestData = {
+        companyName: company.companyName,
+        companyNumber: company.mobileNumber,
+        companyEmail: company.email,
+        message: jeevikaRequestMessage,
+        timestamp: new Date().toISOString()
+      };
+
+      const response = await sendMessage(requestData, token);
+      
+      if (response?.data?.success) {
+        message.success("Your request has been submitted. Jeevika will find suitable employees for you!");
+        setJeevikaRequestMessage(''); // Clear the message
+        setJeevikaModalVisible(false);
+      } else {
+        message.error(response?.data?.message || "Failed to send request");
+      }
+    } catch (error) {
+      console.error("Error sending Jeevika request:", error);
+      message.error("Failed to send request. Please try again later.");
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
   // Get unique job roles for filter dropdown
   const getUniqueJobRoles = () => {
     const jobRoles = employees.map(emp => emp.jobRole);
@@ -309,30 +350,11 @@ const CompanyDashboard = () => {
             <Modal
               title="Jeevika Employee Finder"
               open={jeevikaModalVisible}
-              onOk={() => {
-                // Send the request via websocket
-                if (!company) {
-                  message.error("Company data not found. Please log in again.");
-                  return;
-                }
-
-                const requestData = {
-                  companyName: company.companyName,
-                  companyNumber: company.mobileNumber,
-                  requestMessage: jeevikaRequestMessage,
-                  timestamp: new Date().toISOString()
-                };
-
-                // Emit the event through socket
-                socket.emit("jeevikaEmployeeRequest", requestData);
-
-                message.success("Your request has been submitted. Jeevika will find suitable employees for you!");
-                setJeevikaRequestMessage(''); // Clear the message
-                setJeevikaModalVisible(false);
-              }}
+              onOk={handleJeevikaRequest}
               onCancel={() => setJeevikaModalVisible(false)}
               okText="Submit Request"
               cancelText="Cancel"
+              confirmLoading={submitLoading}
             >
               <p>Let Jeevika's AI-powered system find the perfect employees for your business needs!</p>
               <div className="mt-4">
