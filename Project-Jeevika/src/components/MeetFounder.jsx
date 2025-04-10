@@ -29,21 +29,21 @@ const founders = [
 
 const MeetFounder = () => {
   return (
-    <section className="bg-white dark:bg-gray-900">
+    <section className="bg-white">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-sm text-center mb-8 lg:mb-16">
-          <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900">
             Meet Founders
           </h2>
-          <h2 className="text-lg font-medium text-gray-500 dark:text-gray-400">
-          Together, we’re not just students — we’re builders, creators, and innovators shaping the future one project at a time.
+          <h2 className="text-lg font-medium text-gray-500">
+            Together, we’re not just students — we’re builders, creators, and innovators shaping the future one project at a time.
           </h2>
         </div>
         <div className="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
           {founders.map((founder, index) => (
             <div
               key={index}
-              className={`flex items-center bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ${
+              className={`flex items-center bg-gray-50 rounded-lg shadow ${
                 index === 2 ? "md:col-span-2 justify-center" : ""
               }`}
             >
@@ -53,11 +53,11 @@ const MeetFounder = () => {
                 alt={founder.name}
               />
               <div className="p-5">
-                <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                <h3 className="text-xl font-bold tracking-tight text-gray-900">
                   {founder.name}
                 </h3>
-                <span className="text-gray-500 dark:text-gray-400">{founder.position}</span>
-                <p className="mt-3 mb-4 font-light text-gray-500 dark:text-gray-400">
+                <span className="text-gray-500">{founder.position}</span>
+                <p className="mt-3 mb-4 font-light text-gray-500">
                   {founder.description}
                 </p>
                 <ul className="flex space-x-4">
@@ -66,7 +66,7 @@ const MeetFounder = () => {
                       href={founder.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                      className="text-gray-500 hover:text-gray-900"
                     >
                       <svg
                         className="w-6 h-6"
