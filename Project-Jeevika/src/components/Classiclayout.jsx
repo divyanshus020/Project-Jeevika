@@ -11,22 +11,30 @@ const ClassicLayout = ({ type }) => {
     hire: { 
       image: Team, // Image for Hire Page
       imageAlt: "Hiring Image",
-      title: "Join Our Team",
-      text1:
-        "At Jeevika, we understand the struggles of finding stable and well-paying jobs. That’s why we are here to connect you directly with industries, restaurants, and businesses that need hardworking and skilled workers like you.",
-      text2:
-        "Our company offers a supportive work environment, growth opportunities, and the chance to work on exciting projects.",
+      title: "What Jeevikaa Provides you ?",
+      text1: `
+        🔹 Find Verified Workers – Skilled and unskilled, ready to work.
+        🔹 Reduce Hiring Hassles – No fake resumes, no unreliable hires.
+        🔹 Hire On-Demand – Get workers as per your specific needs.
+      `,
+      text2: `
+        Prevent losses, boost productivity! Either find the worker by yourself or let Jeevika handle the hiring so you can focus on growing your business. Register now and get the best workforce for your company. 🚀
+      `,
       buttonText: "Apply Now",
       loginPath: "/login/company", // Navigate to company login
     },
     default: {
       image: Employee, // Default Image
       imageAlt: "Classic Design",
-      title: "Classic Layout Design",
-      text1:
-        "This is a classic design layout with an image on the left and text on the right. The layout is responsive, and the image and text will stack on top of each other on smaller screens.",
-      text2:
-        "Tailwind CSS makes it easy to build responsive layouts with utility-first classes. This design is flexible and adapts to different screen sizes.",
+      title: "Why Choose Jeevika?",
+      text1: `
+        ✅ Find Jobs Easily – Get work in factories, industries, restaurants, and more without any hassle.
+      `,
+      text2: `
+        ✅ Elimination of Contractor – Get a job without a contractor and prevent being exploited by them.
+        ✅ Work as Per Your Skills – Get hired based on your experience and expertise.
+        ✅ Flexible Job Options – Choose between full-time, part-time, or daily wage jobs as per your needs.
+      `,
       buttonText: "Apply Now",
       loginPath: "/login/employee", // Default to employee login
     },
@@ -52,8 +60,8 @@ const ClassicLayout = ({ type }) => {
           <h2 className="text-4xl font-extrabold text-gray-800 mb-6">   
             {layoutData.title}
           </h2>
-          <p className="text-lg text-gray-600 mb-6">{layoutData.text1}</p>
-          <p className="text-lg text-gray-600 mb-6">{layoutData.text2}</p>
+          <p className="text-lg text-gray-600 mb-6 whitespace-pre-line">{layoutData.text1}</p>
+          <p className="text-lg text-gray-600 mb-6 whitespace-pre-line">{layoutData.text2}</p>
 
           {/* Join Us Button */}
           <button
