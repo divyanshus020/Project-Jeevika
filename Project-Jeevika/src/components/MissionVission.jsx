@@ -6,7 +6,9 @@ import Vision from '../assets/vision.png';
 const MissionVisionValue = ({ items }) => {
   return (
     <div className="container mx-auto px-4 py-10">
-      <h2 className="w-full text-center mb-10 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl dark:text-white">Our Mission, Vision & Values</h2>
+      <h2 className="w-full text-center mb-10 text-3xl font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl text-gray-900">
+        Our Mission, Vision & Values
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {items.map((item, index) => (
           <div
