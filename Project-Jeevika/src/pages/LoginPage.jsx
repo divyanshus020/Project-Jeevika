@@ -4,14 +4,15 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import EmployeeForm from "../components/EmployeeForm";
 import CompanyForm from "../components/CompanyForm";
 import AdminForm from "../components/AdminForm";
-import bgImage from "../assets/BG.jpg";
+import employeeBgImage from "../assets/Employee.jpg"; // Import employee background
+import companyBgImage from "../assets/Company.jpg";   // Import company background
+import adminBgImage from "../assets/Admin.jpg";       // Import admin background
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { role: paramRole } = useParams();
   const [role, setRole] = useState(paramRole || "employee");
-
 
   // Check for redirect param in URL
   const searchParams = new URLSearchParams(location.search);
@@ -32,8 +33,6 @@ const LoginPage = () => {
 
   }, [redirectTo, navigate, location]);
 
-
-
   // Redirect to default role if role is missing in URL
   useEffect(() => {
     if (!paramRole) {
@@ -48,14 +47,27 @@ const LoginPage = () => {
     }
   }, [role, paramRole, navigate]);
 
-
+  // Function to get the appropriate background image based on role
+  const getBackgroundImage = () => {
+    switch (role) {
+      case "employee":
+        return employeeBgImage;
+      case "company":
+        return companyBgImage;
+      case "admin":
+        return adminBgImage;
+      default:
+        return employeeBgImage;
+    }
+  };
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center"
+      className="relative min-h-screen flex items-center justify-center transition-all duration-500"
       style={{
-        backgroundImage: `url(${bgImage})`,
+        backgroundImage: `url(${getBackgroundImage()})`,
         backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
       }}
     >
@@ -86,4 +98,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

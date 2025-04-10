@@ -3,16 +3,16 @@ import HeroForm from '../components/HeroForm ';
 
 const heroData = {
     home: {
-        title: "Empowering Lives by Breaking Barriers and Connecting Hands to Work.",
-        description: "Our platform simplifies hiring workers or contractors for factories, restaurants, and other industries. With Jeevika, hiring is faster, smarter, and more reliable—empowering both businesses and workers.",
+        title: "Bridging the Gap Between Employers & Workers",
+        description: "At Jeevika, we connect factories, restaurants, and businesses with skilled and unskilled workers seamlessly. Our platform ensures verified, reliable, and job-ready labor to solve your workforce shortages.",
     },
     Employee: {
-        title: "About Jeevika - Employee section ",
-        description: "Jeevika aims to bridge the gap between establishments and workers by providing a seamless hiring platform, ensuring efficiency for businesses and stable employment for workers.",
+        title: "Bridging the Gap Between Employers & Workers",
+        description: "Looking for skilled and dependable workers? Jeevika makes hiring easy and risk-free! Register your company today and find workers tailored to your needs. Pay only after worker confirmation, ensuring a seamless and trustworthy hiring experience.",
     },
     Hire: {
-        title: "Our Services - Hire Section ",
-        description: "We provide a smart and efficient hiring platform that connects industries with skilled and unskilled labor, ensuring smooth workforce management.",
+        title: "Bridging the Gap Between Employers & Workers",
+        description: "At Jeevika, we understand the struggles of finding stable and well-paying jobs. That’s why we are here to connect you directly with industries, restaurants, and businesses that need hardworking and skilled workers like you",
     }
 };
 

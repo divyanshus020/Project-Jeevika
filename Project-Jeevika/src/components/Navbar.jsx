@@ -14,12 +14,12 @@ const NavBar = () => {
 
   const navLinks = [
     { id: 1, name: "Home", path: "/" },
-    { id: 2, name: "Employee", path: "/Employee" },
+    { id: 2, name: "Job Seeker", path: "/Employee" },
     { id: 3, name: "Company", path: "/Hire" },
   ];
 
   const registrationMenuItems = [
-    { key: "employee", label: <Link to="/register/employee">Employee</Link> },
+    { key: "Job Seeker", label: <Link to="/register/employee">Job Seeker</Link> },
     { key: "company", label: <Link to="/register/company">Company</Link> },
   ];
 

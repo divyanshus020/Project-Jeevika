@@ -8,22 +8,22 @@ const founders = [
     name: "Somya Sehgal",
     position: "Co-Founder",
     image: Somya,
-    description: "An innovative leader with expertise in AI, Web3, and Software Development. Passionate about building cutting-edge solutions and leading tech-driven businesses.",
-    linkedin: "https://linkedin.com/in/divyanshu-sharma"
+    description: "A driven student from the Mathematics and Computing branch, Somya is diving deep into Web Development and Data Structures & Algorithms. As the founder of multiple startups, she blends technical knowledge with entrepreneurial grit, constantly pushing boundaries and building solutions that matter.",
+    linkedin: "https://www.linkedin.com/in/somya-sehgal-159762292?trk=contact-info"
   },
   {
     name: "Suraj",
     position: "Co-Founder",
     image: Suraj,
-    description: "Tech enthusiast and problem solver with deep knowledge of full-stack development, blockchain, and system architecture.",
-    linkedin: "https://linkedin.com/in/suraj"
+    description: "With a sharp analytical mind and a strong foundation in Product Management, Suraj represents the Civil Engineering branch. He’s currently gaining real-world experience through an off-campus internship, where he's applying his skills to solve practical challenges. Suraj is passionate about bridging the gap between user needs and product innovation",
+    linkedin: "https://in.linkedin.com/in/surajsen1729?utm_source=share&utm_medium=member_mweb&utm_campaign=share_via&utm_content=profile"
   },
   {
     name: "Yash",
     position: "Co-Founder",
     image: Yash,
-    description: "Tech enthusiast and problem solver with deep knowledge of full-stack development, blockchain, and system architecture.",
-    linkedin: "https://linkedin.com/in/suraj"
+    description: "A creative powerhouse exploring the intersection of technology and art, Yash specializes in video editing, photoshoots, and is diving into Data Science and Machine Learning. His ability to combine visual storytelling with analytical insights brings a fresh and valuable perspective to any project.",
+    linkedin: "https://www.linkedin.com/in/yash-m-902372272?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
   },
 ];
 
@@ -33,25 +33,48 @@ const MeetFounder = () => {
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-sm text-center mb-8 lg:mb-16">
           <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-            Our Team
+            Meet Founders
+          </h2>
+          <h2 className="text-lg font-medium text-gray-500 dark:text-gray-400">
+          Together, we’re not just students — we’re builders, creators, and innovators shaping the future one project at a time.
           </h2>
         </div>
         <div className="grid gap-8 mb-6 lg:mb-16 md:grid-cols-2">
           {founders.map((founder, index) => (
-            <div key={index} className="flex items-center bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-              
-              <img className="w-80 h-48 p-2 rounded-lg sm:rounded-none sm:rounded-l-lg object-cover" src={founder.image} alt={founder.name} />
+            <div
+              key={index}
+              className={`flex items-center bg-gray-50 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 ${
+                index === 2 ? "md:col-span-2 justify-center" : ""
+              }`}
+            >
+              <img
+                className="w-80 h-48 p-2 rounded-lg sm:rounded-none sm:rounded-l-lg object-cover"
+                src={founder.image}
+                alt={founder.name}
+              />
               <div className="p-5">
                 <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {founder.name}
                 </h3>
                 <span className="text-gray-500 dark:text-gray-400">{founder.position}</span>
-                <p className="mt-3 mb-4 font-light text-gray-500 dark:text-gray-400">{founder.description}</p>
+                <p className="mt-3 mb-4 font-light text-gray-500 dark:text-gray-400">
+                  {founder.description}
+                </p>
                 <ul className="flex space-x-4">
                   <li>
-                    <a href={founder.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"/>
+                    <a
+                      href={founder.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="M22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0ZM7.12 20.45H3.56V9h3.56v11.45ZM5.34 7.51a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM20.45 20.45h-3.56v-5.6c0-1.34-.03-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96v5.7h-3.56V9h3.42v1.56h.05c.48-.91 1.66-1.87 3.42-1.87 3.66 0 4.34 2.41 4.34 5.54v6.22Z" />
                       </svg>
                     </a>
                   </li>
@@ -63,6 +86,6 @@ const MeetFounder = () => {
       </div>
     </section>
   );
-}
+};
 
 export default MeetFounder;

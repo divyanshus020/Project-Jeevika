@@ -1,6 +1,6 @@
 import React from "react";
-import Team from "../assets/Team.png";
-import Employee from "../assets/Employee.png";
+import Team from "../assets/HR.jpg";
+import Employee from "../assets/JobSeek.jpg";
 import { useNavigate } from "react-router-dom";
 
 const ClassicLayout = ({ type }) => {
@@ -8,12 +8,12 @@ const ClassicLayout = ({ type }) => {
 
   // Define the data inside ClassicLayout based on the `type` prop
   const data = {
-    hire: {
+    hire: { 
       image: Team, // Image for Hire Page
       imageAlt: "Hiring Image",
       title: "Join Our Team",
       text1:
-        "We are looking for talented individuals to be a part of our dynamic team. Join us and make a difference.",
+        "At Jeevika, we understand the struggles of finding stable and well-paying jobs. That’s why we are here to connect you directly with industries, restaurants, and businesses that need hardworking and skilled workers like you.",
       text2:
         "Our company offers a supportive work environment, growth opportunities, and the chance to work on exciting projects.",
       buttonText: "Apply Now",

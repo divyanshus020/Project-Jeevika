@@ -19,6 +19,8 @@ const Home = () => {
             <MissionVission />
 
             <FloatButton
+                href='https://wa.me/9145938795'
+                target='_blank'
                 shape="circle"
                 type="primary"
                 style={{ insetInlineEnd: 94 }}

@@ -59,7 +59,7 @@ const EmployeeForm = () => {
   return (
     <div className="flex flex-col items-center justify-center h-auto ">
       <div className="p-8 border rounded-lg shadow-md w-full max-w-md bg-white">
-        <h2 className="text-2xl font-bold text-center mb-6">Employee Login</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Job Seeker Login</h2>
 
         <Form onFinish={handleSubmit} layout="vertical">
           <Form.Item
