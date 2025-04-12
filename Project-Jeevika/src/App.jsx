@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation ,Navigate } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
-import NavBar from "./components/NavBar";
+import Navbar from "./components/Navbar";
 import Loader from "./components/Loader";
 
 // Lazy load components for better performance
@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      {!hideNavBar && <NavBar />}
+      {!hideNavBar && <Navbar />}
       {children}
     </>
   );

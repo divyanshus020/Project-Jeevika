@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Layout, message, Spin, Form, Modal, Button, notification } from "antd";
 import { getAllEmployees, getAllCompanies } from "../utils/api";
-import AdminNavbar from "../components/admin/AdminNavbar";
+import AdminNavbar from "../components/Admin/AdminNavbar";
 import AdminHome from "../components/admin/AdminHome";
 import EmployeeTable from "../components/admin/EmployeeTable";
 import CompanyTable from "../components/admin/CompanyTable";
